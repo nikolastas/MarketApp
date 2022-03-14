@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var bodyParser = require('body-parser')
 var data = require('./data');
 
 var indexRouter = require('./routes/index');
@@ -18,10 +18,12 @@ var app = express();
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.static(path.join(__dirname, 'public')));
 
-const {format} = require("date-fns")
-app.locals.format = format;
+// const {format} = require("date-fns")
+// app.locals.format = format;
 
 app.use('/', indexRouter);
 
@@ -41,7 +43,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('error');
 });
 
 

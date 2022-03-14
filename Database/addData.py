@@ -14,33 +14,46 @@ db = client.MarketApp
 collection_name = db["MarketItems"]
 
 class Item :
-    def __init__(self, id, item_name, category, quantity) -> None:
-        self.id = id
+    def __init__(self,item_name, category, quantity) -> None:
+        # self.id = id
         self.item_name =item_name
         self.category = category
         self.quantity = quantity
 items=[]
-items.append (Item(0,"tomatoes", "fruits",1))
-items.append (Item(1,"banannas", "fruits",2))
-items.append (Item(2,"oranges", "fruits",3))
-items.append (Item(3,"strawberries", "fruits",4))
-items.append (Item(4,"chicken", "meat",5))
-items.append (Item(5,"pork", "meat",6))
-items.append (Item(6,"cleaning thing", "other",7))
+# size = 1
+items.append (Item("τοματες", "λαχανικά",1))
+items.append (Item("δημητρικά cheerios", "δημητριακα",1))
+items.append (Item("ψωμί", "φριγανίες",1))
+items.append (Item("φραουλες", "φρουτα",1))
+items.append (Item("λογαδι τυρι τοστ", "τυριά",1))
+items.append (Item("γαλοπουλα", "αλαντικά",1))
+items.append (Item("πατατάκια", "Σνακς",1))
+items.append (Item("Βεργίνα βαις", "μπυρες",1))
+items.append (Item("Οδοντοκρεμα", "Στοματική Υγιεινή",1))
+items.append (Item("Κλινεξ", "Καθαριότητα Σπιτιού",1))
+items.append (Item("Δωδώνη Γιαούρτι 2%", "Γιαούρτια",1))
+
+
 
 # result = (collection_name.find({'_id':1}))
 # for res in result:
 #     print(res)
+try:
+    collection_name.delete_many({})
+except:
+    print("no collection delete needed")
+size = 1
 for item in items:
-    tmp = collection_name.count_documents({'_id':item.id})
+    tmp = collection_name.count_documents({'_id':size})
     if (tmp>=1):
         continue
     else:
         collection_name.insert_one({
-        "_id":item.id,
+        "_id":size,
         "item_name":item.item_name,
         "category":item.category,
         "quantity":item.quantity
         })
+        size+=1
     
     
