@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 const express = require('express');
 
 // mongo db
-const uri = "mongodb+srv://nikolastas:nikolastas2019@marketapp.5vzy4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = "mongodb://nikolastas:aQI5IplodxBX3YF3aRAyhEwhjWaOGBaUzjPHnWRf3QjAh1aadTVT1bV0rKiW34Tf98zqBUO6j6D6y6wP2M4Gcw==@nikolastas.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@nikolastas@";
 const client = new MongoClient(uri);
 
 //connect to mongo
@@ -22,18 +22,19 @@ async function run() {
 run().catch(console.dir);
 
 //express app
-const app = express();
+const app = express.Router();
 
 //endpoints
-app.get('/get-items', async (req,res)=> {
+app.get('/get-:something', async (req,res)=> {
+  var something = req.params.something;
   try{
     await client.connect();
     const database = client.db('MarketApp')
-    const MarketItems = database.collection('MarketItems');
+    const MarketItems = database.collection(something);
     // const query = { title: 'Back to the Future' };
     const cursor = await MarketItems.find({}).toArray();
     client.close();
-    console.log(cursor);
+    console.log("[200]: getting ", something);
     res.status(200).send(cursor)
   }
   catch(e){
@@ -46,6 +47,6 @@ app.get('/get-items', async (req,res)=> {
 //port and ip of backend
 const port = 3000;
 const ip = 'localhost';
-app.listen(port, ip, () => {
+app.listen(port, () => {
     console.log('listening for request on '+ip+":"+port);
 })
