@@ -3,7 +3,7 @@
 # from unittest import skip
 import pymongo
 def get_database():
-    CONNECTION_STRING = "mongodb+srv://nikolastas:nikolastas2019@marketapp.5vzy4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    CONNECTION_STRING = "mongodb://nikolastas:aQI5IplodxBX3YF3aRAyhEwhjWaOGBaUzjPHnWRf3QjAh1aadTVT1bV0rKiW34Tf98zqBUO6j6D6y6wP2M4Gcw==@nikolastas.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@nikolastas@"
 
     client = pymongo.MongoClient(CONNECTION_STRING)
 
