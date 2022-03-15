@@ -82,7 +82,7 @@ router.get('/get-:something', async (req,res)=> {
       res.status(200).send("added to the database!"); 
     } catch(e){
       console.log("error",e);
-      res.status(404).send(e.message, e.code);
+      res.status(404).send(e.message);
     }
     
   });
@@ -95,7 +95,7 @@ router.get('/get-:something', async (req,res)=> {
     let key;
     for (key in req.body){
       if(req.body[key] != collection_name && req.body[key] != id){
-        new_json_obj[key]=req.body[key];
+        new_json_obj[key]=isNaN(req.body[key]) ? req.body[key] : Number(req.body[key]);
       }
     }
     try{
@@ -110,7 +110,14 @@ router.get('/get-:something', async (req,res)=> {
       const options = {upsert:false};
       const result = await collectionName.updateOne(filter, updateDoc, options )
       await client.close();
-      res.status(200).send(new_json_obj);
+      console.log(result);
+      if(result.modifiedCount == 0){
+        res.status(500).send("object didnt exist to update!")
+      }
+      else{
+        res.status(200).send("object updated successfully in database!");
+
+      }
 
     } catch(e){
       res.status(400).send(e.message);
