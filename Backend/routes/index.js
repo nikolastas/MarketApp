@@ -74,7 +74,7 @@ router.get('/get-:something', async (req,res)=> {
         }
       }
       insertedValueString+="}";
-      console.log(insertedValueString);
+      // console.log(insertedValueString);
       const json_object_I_am_about_to_insert = JSON.parse(insertedValueString);
       const result = await collectionName.insertOne(json_object_I_am_about_to_insert);
       console.log(`A document was inserted with the _id: ${result.insertedId}`);
@@ -86,5 +86,40 @@ router.get('/get-:something', async (req,res)=> {
     }
     
   });
+
+  router.post('/update', async (req,res)=>{
+    const collection_name = req.body.collection_name;
+    const id = req.body.id;
+    
+    var new_json_obj = {};
+    let key;
+    for (key in req.body){
+      if(req.body[key] != collection_name && req.body[key] != id){
+        new_json_obj[key]=req.body[key];
+      }
+    }
+    try{
+      const client = new MongoClient(uri);
+      await client.connect();
+      const database = client.db('MarketApp')
+      const collectionName = database.collection(collection_name);
+      const filter = {"_id":id};
+      const updateDoc = {
+        $set: new_json_obj,
+      };
+      const options = {upsert:false};
+      const result = await collectionName.updateOne(filter, updateDoc, options )
+      await client.close();
+      res.status(200).send(new_json_obj);
+
+    } catch(e){
+      res.status(400).send(e.message);
+    }
+  });
+
+
+
+
+
 
   module.exports = router;
