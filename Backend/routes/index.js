@@ -6,7 +6,9 @@ const {MongoClient} = require('mongodb')
 // const Task = mongoose.model('Task');
 const uri = process.env.DATABASE_URL;
 const client = new MongoClient(uri);
-
+router.get('*', (req,res)=> {
+res.
+});
 router.get('/', (req,res)=>{
     res.status(200).send("welcome");
 });
@@ -110,7 +112,7 @@ router.get('/get-:something', async (req,res)=> {
       const options = {upsert:false};
       const result = await collectionName.updateOne(filter, updateDoc, options )
       await client.close();
-      res.status(200).send(new_json_obj);
+      res.status(200).send("updated to db!");
 
     } catch(e){
       res.status(400).send(e.message);
