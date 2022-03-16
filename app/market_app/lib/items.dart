@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:http/http.dart' as http;
 
@@ -24,7 +23,7 @@ Future<List<item>> createItem(http.Client client) async {
   print("i got in the createItem");
   final response = await client
   .get(
-    Uri.parse('http://localhost:3000/get-MarketItems'));
+    Uri.parse('https://marketapp2022.azurewebsites.net/get-MarketItems'));
 
   if (response.statusCode == 200){
     final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
@@ -55,10 +54,10 @@ class _itemsState extends State<items> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: (_futureItem == null) ? buildColumn() : buildFutureBuilder()
-    );
-  }
+    return Scaffold(
+      body: buildFutureBuilder()
+    
+    );  }
   Column buildColumn() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -82,11 +81,12 @@ class _itemsState extends State<items> {
 
   FutureBuilder<List<item>> buildFutureBuilder() {
     return FutureBuilder<List<item>>(
-      future: _futureItem,
+      future: createItem(http.Client()),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           print("snapshot has Data");
-          return Text('${snapshot.data?.length}');
+          return  ItemsList(items:snapshot.data!);
+          
         } else if (snapshot.hasError) {
           print(snapshot.data);
           print("snapshot doesnt has Data");
@@ -102,3 +102,44 @@ class _itemsState extends State<items> {
 
 }
 
+class ItemsList extends StatelessWidget {
+  const ItemsList({Key? key, required this.items}) : super(key: key);
+
+  final List<item> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        
+        childAspectRatio: 3 / 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20, 
+        crossAxisCount: 2
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return Container(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Text('${items[index].quantity}'),
+                      SizedBox(width: 10,),
+                      Text(items[index].name),
+                      ]),
+                      SizedBox(height: 10,),
+                      Text(items[index].category)
+                  ],
+                ),
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(15)),
+              );
+      },
+    );
+  }
+}
