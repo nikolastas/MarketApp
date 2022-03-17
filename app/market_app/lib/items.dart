@@ -26,12 +26,22 @@ class Item {
   }
 }
 
-Future<void> deleteItem(http.Client client, int id) async {
+Future<void> deleteItem(int id) async {
   print("i am about to cancel a selected item");
-  final response = await client
-      .post(Uri.parse('https://marketapp2022.azurewebsites.net/delete'), body: {
-    jsonEncode(<String, String>{"id": '$id', "collection_name": 'MarketItems'})
-  });
+  final response = await http.post(
+      Uri.parse('https://marketapp2022.azurewebsites.net/delete'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "id": id.toString(),
+        "collection_name": 'MarketItems'
+      }));
+  if (response.statusCode == 200) {
+    print("deleted successfully");
+  } else {
+    print("something went wrong");
+  }
 }
 
 Future<List<Item>> createItem(http.Client client) async {
@@ -171,7 +181,7 @@ class _ItemsList extends State<ItemsList> {
                           setState(() {
                             debugPrint(
                                 "this should send a delete  post request");
-                            deleteItem(http.Client(), items[index].id);
+                            deleteItem(items[index].id);
                             items[index].value = val!;
                           });
                         })
