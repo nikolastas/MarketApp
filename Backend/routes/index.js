@@ -15,7 +15,7 @@ router.get('/health', (req,res) =>{
     "status":"OK"
   });
 });
-  router.get('/get-MarketItems', basicController.market_items_get);
+  router.get('/get-:s', basicController.market_items_get);
   router.post('/delete' , basicController.delete_post);
   router.post("/add", basicController.add_post);
   router.post('/update', basicController.update_post);

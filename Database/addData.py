@@ -1,6 +1,7 @@
 
 # from msilib.schema import Error
 # from unittest import skip
+from datetime import datetime, date
 import pymongo
 def get_database():
     CONNECTION_STRING = "mongodb://nikolastas:aQI5IplodxBX3YF3aRAyhEwhjWaOGBaUzjPHnWRf3QjAh1aadTVT1bV0rKiW34Tf98zqBUO6j6D6y6wP2M4Gcw==@nikolastas.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@nikolastas@"
@@ -12,7 +13,7 @@ client = get_database()
 db = client.MarketApp
 
 collection_name = db["MarketItems"]
-
+cat = db ["ItemCategories"]
 class Item :
     def __init__(self,item_name, category, quantity) -> None:
         # self.id = id
@@ -33,13 +34,19 @@ items.append (Item("Οδοντοκρεμα", "Στοματική Υγιεινή"
 items.append (Item("Κλινεξ", "Καθαριότητα Σπιτιού",1))
 items.append (Item("Δωδώνη Γιαούρτι 2%", "Γιαούρτια",1))
 
-
-
+categories = []
+c=1
+for item in items :
+    if item.category not in categories:
+        
+        categories.append({"_id":c,"name":item.category})
+        c+=1
 # result = (collection_name.find({'_id':1}))
 # for res in result:
 #     print(res)
 try:
     collection_name.delete_many({})
+    cat.delete_many({})
 except:
     print("no collection delete needed")
 size = 1
@@ -52,8 +59,9 @@ for item in items:
         "_id":size,
         "item_name":item.item_name,
         "category":item.category,
-        "quantity":item.quantity
+        "quantity":item.quantity,
+        "lastModified": date.today().strftime("%d/%m/%Y %H:%M:%S")
         })
         size+=1
     
-    
+cat.insert_many(categories)

@@ -109,15 +109,16 @@ module.exports.add_post = async (req,res)=>{
   };
 
   module.exports.market_items_get = async (req,res)=> {
-    
+    let s = req.params.s;
+    console.log(s);
     try{
         const client = new MongoClient(uri);
       
-        const MarketItems = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems')
+        const MarketItems = await connect_to_DB_and_collection(client, 'MarketApp', s)
         // const query = { title: 'Back to the Future' };
         const cursor = await MarketItems.find({}).toArray();
         await client.close();
-        console.log("[200]: getting all marketitems");
+        console.log(`[200]: getting all ${s}`);
         res.status(200).send(cursor)
     }
     catch(e){
