@@ -4,8 +4,7 @@ import 'colors.dart';
 import 'items.dart';
 import 'markets.dart';
 
-void main(){
-  
+void main() {
   runApp(MyApp());
 }
 
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: _title,
       home: MyStatefulWidget(),
     );
@@ -24,7 +23,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyStatefulWidget extends StatefulWidget {
-
   const MyStatefulWidget({Key? key}) : super(key: key);
 
   @override
@@ -32,16 +30,14 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-
-
-  // _MyStatefulWidgetState({required this.camera});
+  // _MyStatefulWidgetState();
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(
     fontSize: 12,
     fontFamily: 'Roboto',
   );
   var paidStatus = true;
-  late List screens = [items(), markets()];
+  late List screens = [Items(), markets()];
   static const List<Widget> _widgetOptions = <Widget>[
     Text(
       'Items',
@@ -50,7 +46,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     Text(
       'Markets',
       style: optionStyle,
-      ),
+    ),
   ];
 
   void _onItemTapped(int index) async {
