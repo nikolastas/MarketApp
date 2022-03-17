@@ -18,7 +18,7 @@ async function connect_to_DB_and_collection(client, db, collection_name){
 // function to return all the data given by the user!
 function get_data_exept(body, list){
     
-    var new_json_obj = {};
+    let new_json_obj = {};
     let key;
     for (key in body) {
         console.log(key, list);
@@ -35,7 +35,7 @@ module.exports.update_post = async (req, res) => {
     const collection_name = req.body.collection_name;
     const id = req.body.id;
     
-    var new_json_obj = get_data_exept(req.body, [req.body.id, req.body.collection_name]);
+    let new_json_obj = get_data_exept(req.body, [req.body.id, req.body.collection_name]);
     try {
         const client = new MongoClient(process.env.DATABASE_URL);
         const collection = await connect_to_DB_and_collection(client, 'MarketApp', collection_name);
@@ -63,7 +63,7 @@ module.exports.update_post = async (req, res) => {
 
 module.exports.add_post = async (req,res)=>{
     console.log(req.body);
-    var collection_name = req.body.collection_name;
+    let collection_name = req.body.collection_name;
     try{
       const client = new MongoClient(uri);
       const collectionName = await connect_to_DB_and_collection(client, 'MarketApp', collection_name);
