@@ -14,6 +14,7 @@ db = client.MarketApp
 
 collection_name = db["MarketItems"]
 cat = db ["ItemCategories"]
+supercat =db["SuperItemCategories"]
 class Item :
     def __init__(self,item_name, category, quantity) -> None:
         # self.id = id
@@ -22,31 +23,35 @@ class Item :
         self.quantity = quantity
 items=[]
 # size = 1
-items.append (Item("τοματες", "λαχανικά",1))
-items.append (Item("δημητρικά cheerios", "δημητριακα",1))
-items.append (Item("ψωμί", "φριγανίες",1))
-items.append (Item("φραουλες", "φρουτα",1))
-items.append (Item("λογαδι τυρι τοστ", "τυριά",1))
-items.append (Item("γαλοπουλα", "αλαντικά",1))
-items.append (Item("πατατάκια", "Σνακς",1))
-items.append (Item("Βεργίνα βαις", "μπυρες",1))
+items.append (Item("τοματες", "Φρέσκα Φρούτα & Λαχανικά",1))
+items.append (Item("δημητρικά cheerios", "Δμητριακά & Ψωμί",1))
+items.append (Item("ψωμί", "Δημητριακά & Ψωμί",1))
+items.append (Item("φραουλες", "Φρέσκα Φρούτα & Λαχανικά",1))
+items.append (Item("λογαδι τυρι τοστ", "Τυριά",1))
+items.append (Item("γαλοπουλα", "Αλλαντικά, Κρέας κά",1))
+items.append (Item("πατατάκια", "Μπύρες, Ποτά & Νερά",1))
+items.append (Item("Βεργίνα βαις", "Μπύρες, Ποτά & Νερά",1))
 items.append (Item("Οδοντοκρεμα", "Στοματική Υγιεινή",1))
 items.append (Item("Κλινεξ", "Καθαριότητα Σπιτιού",1))
-items.append (Item("Δωδώνη Γιαούρτι 2%", "Γιαούρτια",1))
+items.append (Item("Δωδώνη Γιαούρτι 2%", "Γιαούρτια & Επιδόρπια",1))
 
-categories = []
+categories = [["Δημητριακά & Ψωμί", "Ζυμαρικά & Όσπρια", "Παντοπολείο", "Αλλαντικά, Κρέας κά", "Προιόντα Ζύμης", "Κατεψυγμένα Λαχανικά", "Φρέσκα Φρούτα & Λαχανικά", "Ψάρια & Θαλάσσινά"], 
+["Γάλα", "Γιαούρτια & Επιδόρπια", "Κρέμες γάλακτος & Βούτυρα", "Παγωτά", "Τυριά"], 
+["Μπύρες, Ποτά & Νερά", "Χυμοί & Αναψυκτικά", "Σνακς", "Καφές & Ροφήματα"],
+["Γυναικεία Περιποίηση", "Ανδρική περιποίηση", "Καθαριότητα & Προσωπική Υγειίνή", "Περιποίηση Μαλλιών", "Στοματική Υγιεινή", "Ένδυση & Υπόδηση","Προιόντα Περιποιήσης"], 
+["Κουζίνα & Μπάνιο","Καθαριστικά Σπιτιού", "Ρούχα", "Εξοπλισμός Σπιτιού"], 
+["Βρεφική περιποίηση", "Βρεφικές κρέμες", "Πάνες & Μωρομάντηλα", "Βρεφικά Απορρυπαντικά", "Αξεσουάρ για το μωρό"], 
+["Κατοικίδια", "Άλλα προιόντα"]]
 c=1
-for item in items :
-    if item.category not in categories:
-        
-        categories.append({"_id":c,"name":item.category})
-        c+=1
+supercategories = ["Τροφιμα", "Γαλακτοκομικά & Τυριά", "Χυμοί, Κάβα & Σνακς","Προσωπική φροντίδα", "Οικιακή φροντίδα", "Βρεφικά Είδη", "Διάφορα"]
+
 # result = (collection_name.find({'_id':1}))
 # for res in result:
 #     print(res)
 try:
     collection_name.delete_many({})
-    cat.delete_many({})
+    # cat.delete_many({})
+    # supercat.delete_many({})
 except:
     print("no collection delete needed")
 size = 1
@@ -60,8 +65,19 @@ for item in items:
         "item_name":item.item_name,
         "category":item.category,
         "quantity":item.quantity,
-        "lastModified": date.today().strftime("%d/%m/%Y %H:%M:%S")
+        "lastModified": datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         })
         size+=1
-    
-cat.insert_many(categories)
+# a =1 
+# b=1
+# list_of_supercat = []
+# list_of_cat = []
+# for ca,sc in zip(categories,supercategories):
+#     list_of_supercat.append({"_id":a, "name":sc})
+#     a+=1
+#     for t in ca :
+#         list_of_cat.append({"_id":b,"name":t, "super_category":sc})
+#         b+=1    
+
+# cat.insert_many(list_of_cat)
+# supercat.insert_many(list_of_supercat)

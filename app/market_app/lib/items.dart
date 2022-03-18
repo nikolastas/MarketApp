@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:market_app/add_item.dart';
 import 'package:market_app/edit_items.dart';
 
 class Item {
@@ -171,8 +172,18 @@ class _ItemsList extends State<ItemsList> {
   }
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+      appBar: AppBar(title: Text("Market App"), backgroundColor: Colors.amber[900],),
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          categories = await createCategories(http.Client());
+          Navigator.push(context,MaterialPageRoute(builder: (context) => AddItems(index: items.length+1, categories: categories.map((e) => e.name).toList())));
+        }, 
+        label: Text("Add Item"), 
+        icon: Icon(Icons.add),
+        backgroundColor: Colors.amber,),
       body: ListView.builder(
         // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         //     childAspectRatio: 3 / 2,
@@ -200,9 +211,21 @@ class _ItemsList extends State<ItemsList> {
                   InkWell(
                     onTap: () async { 
                       print("pressed");
-                      categories = await createCategories(http.Client());
-                      Navigator.push(context,MaterialPageRoute(builder: (context) => EditItems(category: items[index].category,categories: categories.map((e) => e.name).toList(), quantity: items[index].quantity, name: items[index].name)));
                       
+                      var list = await Navigator.push(
+                        context,
+                         MaterialPageRoute(builder: (context) => EditItems(id:items[index].id,category: items[index].category,categories: categories.map((e) => e.name).toList(), quantity: items[index].quantity, name: items[index].name)));
+                      print(list);
+                      if(list!=null){
+                        if( ((list).length >=5 )){
+                          setState(() {
+                            Item i = Item.fromJson(list);
+                            items[index] = i;
+
+                          });
+
+                        }
+                      }
                     },
                     
                     child: Row(

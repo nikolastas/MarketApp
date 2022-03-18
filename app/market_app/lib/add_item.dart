@@ -3,36 +3,30 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<void> updateItem(String j) async {
+Future<http.Response> addItem(String j) async {
   print("i am about to update an item");
   final response = await http.post(
-      Uri.parse('https://marketapp2022.azurewebsites.net/update'),
+      Uri.parse('https://marketapp2022.azurewebsites.net/add'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: j);
-  if (response.statusCode == 200) {
-    print("updated item successfully");
-    return ;
-  } else {
-    print("something went wrong with the update of the item");
-    return ;
-  }
+  return response;
 }
 
 
-class EditItems extends StatefulWidget {
-  String name ;
-  List<String> categories;
-  String category;
-  int quantity;
-  int id;
-  EditItems({ Key? key, required this.id ,required this.categories, required this.category, required this.name, required this.quantity }) : super(key: key);
+class AddItems extends StatefulWidget {
+  // String name ;
+  final List<String> categories;
+  // final String category;
+  // int quantity;
+  final int index;
+  const AddItems({ Key? key, required this.index ,required this.categories}) : super(key: key);
 
   @override
-  _EditItems createState() => _EditItems();
+  _AddItems createState() => _AddItems();
 }
-class _EditItems extends State<EditItems>{
+class _AddItems extends State<AddItems>{
   late String changed_item_name ;
   late String changed_category ;
   late int changed_quantity ;
@@ -44,9 +38,10 @@ class _EditItems extends State<EditItems>{
   @override
   void initState() {
     super.initState();
-    changed_category = widget.category;
-    changed_item_name = widget.name;
-    changed_quantity = widget.quantity;
+    // print(widget.categories);
+    changed_category = widget.categories.elementAt(0);
+    // changed_item_name = widget.name;
+    // changed_quantity = widget.quantity;
   }
   @override
   Widget build(BuildContext context) {
@@ -58,45 +53,21 @@ class _EditItems extends State<EditItems>{
         backgroundColor: Colors.indigo,
         icon: Icon(Icons.done_sharp),
         onPressed: () async { 
-          var list =<String, dynamic> {"id":widget.id};
-          var flag = false;
-          if(c1.text != "" && c1.text != widget.name ){
-            list.addAll({"item_name": c1.text});
-            flag =true;
-            print(c1.text);
-          }
-          else{
-            list.addAll({"item_name": widget.name});
-          }
-          if(c2.text != "" && c2.text != widget.name ){
-            list.addAll({"quantity":c2.text});
-            flag = true;
-            print(c2.text);
-          }
-          else{
-            list.addAll({"quantity":widget.quantity});
-          }
-          if(changed_category != widget.category){
-            flag =true;
-            list.addAll({"category":changed_category });  
-            print(changed_category );
-          }else{
-            list.addAll({"category":widget.category});
-          }
-          if(flag){
-            list.addAll({"collection_name":"MarketItems"});
-            var j = jsonEncode(list);
-            await updateItem(j);
-            list.addAll({"_id":widget.id});
-            (c2.text != "" && c2.text != widget.name)? list["quantity"]= int.parse(list["quantity"]): list["quantity"]=widget.quantity;
-            Navigator.pop(context, list);
-          }
-          else{
+          
+          var response = await addItem(jsonEncode(<String, String>{"_id": widget.index.toString(), 
+          "collection_name":"MarketItems", 
+          "quantity":c2.text, 
+          "category":(changed_category == null)? "Άλλα προιόντα":changed_category, 
+          "item_name":c1.text}));
+          if (response.statusCode == 200) {
+            print("updated item successfully");
+            Navigator.pop(context);
+          } else {
+            print(widget.index);
+            print(response.body);
+            print("something went wrong with the update of the item");
             
-            Navigator.pop(context, list);
           }
-          
-          
           
          }, label: Text("Done"),),
       body: Column(
@@ -116,7 +87,7 @@ class _EditItems extends State<EditItems>{
                       child: TextField(
                         controller: c1,
                         decoration: InputDecoration(
-                          hintText: changed_item_name
+                          // hintText: changed_item_name
                         ),
                         maxLines: 1,
                         maxLength: 30,
@@ -151,7 +122,7 @@ class _EditItems extends State<EditItems>{
                       child: TextField(
                         controller: c2 ,
                         decoration: InputDecoration(
-                          hintText: changed_quantity.toString()
+                          // hintText: changed_quantity.toString()
                         ),
                         keyboardType: TextInputType.number
                       ),

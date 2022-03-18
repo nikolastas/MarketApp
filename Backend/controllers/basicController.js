@@ -3,6 +3,7 @@
 
 const {MongoClient} = require('mongodb')
 const uri = process.env.DATABASE_URL;
+const moment = require('moment');
 // connect to my database
 
 // const client = new MongoClient(process.env.DATABASE_URL);
@@ -18,22 +19,24 @@ async function connect_to_DB_and_collection(client, db, collection_name){
 // function to return all the data given by the user!
 function get_data_exept(body, list){
     
-    let new_json_obj = {};
+    var new_json_obj = {};
     let key;
     for (key in body) {
-        console.log(key, list);
+        
         if (!(list.includes(body[key]))) {
-            new_json_obj[key] = isNaN(body[key]) ? body[key] : Number(body[key]);
+          console.log(key, list);
+          new_json_obj[key] = isNaN(body[key]) ? body[key] : Number(body[key]);
         }
     }
+    new_json_obj["lastModified"] = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
     return new_json_obj;
 }
 
 
 // the update method to handle an update post request
 module.exports.update_post = async (req, res) => {
-    const collection_name = req.body.collection_name;
-    const id = req.body.id;
+    let collection_name = req.body.collection_name;
+    let id = Number(req.body.id);
     
     let new_json_obj = get_data_exept(req.body, [req.body.id, req.body.collection_name]);
     try {
@@ -90,7 +93,7 @@ module.exports.add_post = async (req,res)=>{
   };
 
   module.exports.delete_post = async (req,res) =>{
-    const id = req.body.id;
+    const id = Number(req.body.id);
     const collection_name = req.body.collection_name;
     console.log(id, collection_name);
     try{
@@ -101,7 +104,12 @@ module.exports.add_post = async (req,res)=>{
 
       await client.close();
       console.log(result);
-      res.status(200).send("deleted from the database!"); 
+      if(result.deletedCount > 0){
+      res.status(200).send("deleted from the database!");
+      }
+      else{
+        res.status(500).send("object didnt deleted from db!")
+      } 
     }catch(e){
       console.log("error",e);
       res.status(404).send(e.message);
