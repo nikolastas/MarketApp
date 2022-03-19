@@ -48,26 +48,26 @@ supercategories = ["Τροφιμα", "Γαλακτοκομικά & Τυριά", 
 # result = (collection_name.find({'_id':1}))
 # for res in result:
 #     print(res)
-try:
-    collection_name.delete_many({})
-    # cat.delete_many({})
-    # supercat.delete_many({})
-except:
-    print("no collection delete needed")
-size = 1
-for item in items:
-    tmp = collection_name.count_documents({'_id':size})
-    if (tmp>=1):
-        continue
-    else:
-        collection_name.insert_one({
-        "_id":size,
-        "item_name":item.item_name,
-        "category":item.category,
-        "quantity":item.quantity,
-        "lastModified": datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        })
-        size+=1
+# try:
+#     collection_name.delete_many({})
+#     # cat.delete_many({})
+#     # supercat.delete_many({})
+# except:
+#     print("no collection delete needed")
+# size = 1
+# for item in items:
+#     tmp = collection_name.count_documents({'_id':size})
+#     if (tmp>=1):
+#         continue
+#     else:
+#         collection_name.insert_one({
+#         "_id":size,
+#         "item_name":item.item_name,
+#         "category":item.category,
+#         "quantity":item.quantity,
+#         "lastModified": datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+#         })
+#         size+=1
 # a =1 
 # b=1
 # list_of_supercat = []
@@ -81,3 +81,16 @@ for item in items:
 
 # cat.insert_many(list_of_cat)
 # supercat.insert_many(list_of_supercat)
+correct_list_1 = ["Δημητριακά & Ψωμί", "Φρέσκα Φρούτα & Λαχανικά","Παντοπολείο","Ψάρια & Θαλάσσινά",
+"Γάλα", "Γιαούρτια & Επιδόρπια", "Κρέμες γάλακτος & Βούτυρα",
+"Ζυμαρικά & Όσπρια",  "Αλλαντικά, Κρέας κά", "Προιόντα Ζύμης", "Κατεψυγμένα Λαχανικά",   
+ "Παγωτά", "Τυριά", 
+"Μπύρες, Ποτά & Νερά", "Χυμοί & Αναψυκτικά", "Σνακς", "Καφές & Ροφήματα",
+"Γυναικεία Περιποίηση", "Ανδρική περιποίηση", "Καθαριότητα & Προσωπική Υγειίνή", "Περιποίηση Μαλλιών", "Στοματική Υγιεινή", "Ένδυση & Υπόδηση","Προιόντα Περιποιήσης", 
+"Κουζίνα & Μπάνιο","Καθαριστικά Σπιτιού", "Ρούχα", "Εξοπλισμός Σπιτιού", 
+"Βρεφική περιποίηση", "Βρεφικές κρέμες", "Πάνες & Μωρομάντηλα", "Βρεφικά Απορρυπαντικά", "Αξεσουάρ για το μωρό", 
+"Κατοικίδια", "Άλλα προιόντα"]
+
+
+
+

@@ -26,7 +26,7 @@ class EditItems extends StatefulWidget {
   List<String> categories;
   String category;
   int quantity;
-  int id;
+  var id;
   EditItems({ Key? key, required this.id ,required this.categories, required this.category, required this.name, required this.quantity }) : super(key: key);
 
   @override

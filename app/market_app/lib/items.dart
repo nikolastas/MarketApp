@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -11,7 +10,7 @@ class Item {
   final String name;
   final int quantity;
   final String category;
-  final int id;
+  final id;
   bool value;
   Item(
       {required this.id,
@@ -101,40 +100,25 @@ class Items extends StatefulWidget {
 class ItemsState extends State<Items> {
   final TextEditingController _controller = TextEditingController();
   Future<List<Item>>? _futureItem;
-
+  Future<List<Category>>? _futureCategory;
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(body: buildFutureBuilder());
   }
 
-  Column buildColumn() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TextField(
-          controller: _controller,
-          decoration: const InputDecoration(hintText: 'Enter Title'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              debugPrint("trying to createitem list");
-              _futureItem = createItem(http.Client());
-            });
-          },
-          child: const Text('Create Data'),
-        ),
-      ],
-    );
-  }
+  
 
-  FutureBuilder<List<Item>> buildFutureBuilder() {
-    return FutureBuilder<List<Item>>(
-      future: createItem(http.Client()),
+  FutureBuilder buildFutureBuilder() {
+    // Future<List<Category>> categories = createCategories(http.Client());
+    return FutureBuilder(
+      future: Future.wait([createItem(http.Client()), createCategories(http.Client())]),
+      
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+         
           debugPrint("snapshot has Data");
-          return ItemsList(items: snapshot.data!);
+          return ItemsList(items: snapshot.data[0]!, categories: snapshot.data[1]!);
         } else if (snapshot.hasError) {
           debugPrint('${snapshot.data}');
           debugPrint("snapshot doesnt has Data");
@@ -142,15 +126,15 @@ class ItemsState extends State<Items> {
           return Text('${snapshot.error}');
         }
 
-        return const CircularProgressIndicator();
+        return Center(child: const CircularProgressIndicator());
       },
     );
   }
 }
 
 class ItemsList extends StatefulWidget {
-  const ItemsList({Key? key, required this.items}) : super(key: key);
-
+  const ItemsList({Key? key, required this.items, required this.categories}) : super(key: key);
+  final List<Category> categories ;
   final List<Item> items;
 
   @override
@@ -159,7 +143,7 @@ class ItemsList extends StatefulWidget {
 
 class _ItemsList extends State<ItemsList> {
   late List<Item> items = [];
-  late List<Category> categories =[];
+  late List<Category> categories = widget.categories;
   // final _checked = <Item> [];
   bool checkboxvalue = false;
   // void _onRememberMeChanged(bool newValue) => setState(() {
@@ -167,19 +151,20 @@ class _ItemsList extends State<ItemsList> {
   @override
   void initState() {
     super.initState();
+    
+
     items = widget.items;
     
   }
   @override
   Widget build(BuildContext context) {
-    
+  
     return Scaffold(
       appBar: AppBar(title: Text("Market App"), backgroundColor: Colors.amber[900],),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          categories = await createCategories(http.Client());
-          Navigator.push(context,MaterialPageRoute(builder: (context) => AddItems(index: items.length+1, categories: categories.map((e) => e.name).toList())));
+          Navigator.push(context,MaterialPageRoute(builder: (context) => AddItems( categories: categories.map((e) => e.name).toList())));
         }, 
         label: Text("Add Item"), 
         icon: Icon(Icons.add),
@@ -210,11 +195,11 @@ class _ItemsList extends State<ItemsList> {
                 
                   InkWell(
                     onTap: () async { 
-                      print("pressed");
-                      
+                      print("pressed to edit");
+                      print(categories.map((e) => e.name).toList());
                       var list = await Navigator.push(
                         context,
-                         MaterialPageRoute(builder: (context) => EditItems(id:items[index].id,category: items[index].category,categories: categories.map((e) => e.name).toList(), quantity: items[index].quantity, name: items[index].name)));
+                         MaterialPageRoute(builder: (context) => EditItems(id:items[index].id,category: items[index].category,categories: categories.map((e) => e.name).toSet().toList(), quantity: items[index].quantity, name: items[index].name)));
                       print(list);
                       if(list!=null){
                         if( ((list).length >=5 )){

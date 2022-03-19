@@ -20,8 +20,8 @@ class AddItems extends StatefulWidget {
   final List<String> categories;
   // final String category;
   // int quantity;
-  final int index;
-  const AddItems({ Key? key, required this.index ,required this.categories}) : super(key: key);
+  
+  const AddItems({ Key? key, required this.categories}) : super(key: key);
 
   @override
   _AddItems createState() => _AddItems();
@@ -54,7 +54,7 @@ class _AddItems extends State<AddItems>{
         icon: Icon(Icons.done_sharp),
         onPressed: () async { 
           
-          var response = await addItem(jsonEncode(<String, String>{"_id": widget.index.toString(), 
+          var response = await addItem(jsonEncode(<String, String>{ 
           "collection_name":"MarketItems", 
           "quantity":c2.text, 
           "category":(changed_category == null)? "Άλλα προιόντα":changed_category, 
@@ -63,7 +63,7 @@ class _AddItems extends State<AddItems>{
             print("updated item successfully");
             Navigator.pop(context);
           } else {
-            print(widget.index);
+            
             print(response.body);
             print("something went wrong with the update of the item");
             
