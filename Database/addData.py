@@ -24,13 +24,13 @@ class Item :
 items=[]
 # size = 1
 items.append (Item("τοματες", "Φρέσκα Φρούτα & Λαχανικά",1))
-items.append (Item("δημητρικά cheerios", "Δμητριακά & Ψωμί",1))
-items.append (Item("ψωμί", "Δημητριακά & Ψωμί",1))
+items.append (Item("δημητρικά cheerios", "Δμητριακά",1))
+items.append (Item("ψωμί", " Ψωμί",1))
 items.append (Item("φραουλες", "Φρέσκα Φρούτα & Λαχανικά",1))
 items.append (Item("λογαδι τυρι τοστ", "Τυριά",1))
-items.append (Item("γαλοπουλα", "Αλλαντικά, Κρέας κά",1))
-items.append (Item("πατατάκια", "Μπύρες, Ποτά & Νερά",1))
-items.append (Item("Βεργίνα βαις", "Μπύρες, Ποτά & Νερά",1))
+items.append (Item("γαλοπουλα", "Αλλαντικά",1))
+items.append (Item("πατατάκια", "Άλλα Σνακς",1))
+items.append (Item("Βεργίνα βαις", "Μπύρες",1))
 items.append (Item("Οδοντοκρεμα", "Στοματική Υγιεινή",1))
 items.append (Item("Κλινεξ", "Καθαριότητα Σπιτιού",1))
 items.append (Item("Δωδώνη Γιαούρτι 2%", "Γιαούρτια & Επιδόρπια",1))
@@ -49,8 +49,8 @@ supercategories = ["Τροφιμα", "Γαλακτοκομικά & Τυριά", 
 # for res in result:
 #     print(res)
 try:
-    # collection_name.delete_many({})
-    cat.delete_many({})
+    collection_name.delete_many({})
+    # cat.delete_many({})
     # supercat.delete_many({})
 except:
     print("no collection delete needed")
@@ -72,7 +72,7 @@ for item in items:
 input={}
 input["group"]="ABCDEFGHIJ"
 input["items"]=items_dict
-# collection_name.insert_one(input)
+collection_name.insert_one(input)
 a =1 
 b=1
 # list_of_supercat = []
@@ -83,7 +83,8 @@ list_of_cat = []
 input2={}
 input2["object"]="SuperCategories"
 input2["value"]=supercategories
-cat.insert_one(input2)
+# insert 
+# cat.insert_one(input2)
 
 for ca,sc in zip(categories,supercategories):
     # list_of_supercat.append({"_id":a, "name":sc})
@@ -113,9 +114,10 @@ input3["value"]={
     "address":"Βουλιαγμένης 43-45, 16561 Γλυφάδα",
 
 }
-cat.insert_one(input3)
-
-cat.insert_one({
-    "object":"items_list",
-    "value":list_of_cat
-})
+# insert
+# cat.insert_one(input3)
+# insert
+# cat.insert_one({
+#     "object":"items_list",
+#     "value":list_of_cat
+# })

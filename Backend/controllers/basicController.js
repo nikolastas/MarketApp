@@ -24,7 +24,7 @@ function get_data_exept(body, list){
     for (key in body) {
         
         if (!(list.includes(body[key]))) {
-          console.log(key, list);
+          // console.log(key, list);
           new_json_obj[key] = isNaN(body[key]) ? body[key] : Number(body[key]);
         }
     }
@@ -35,29 +35,41 @@ function get_data_exept(body, list){
 
 // the update method to handle an update post request
 module.exports.update_post = async (req, res) => {
-    let collection_name = req.body.collection_name;
-    let id = Number(req.body.id);
-    
-    let new_json_obj = get_data_exept(req.body, [req.body.id, req.body.collection_name]);
+   
+    let id = (req.body.item_index);
+    const group =req.app.locals.user.group ;
+
+    let new_json_obj = get_data_exept(req.body, [req.body.item_index]);
     try {
         const client = new MongoClient(process.env.DATABASE_URL);
-        const collection = await connect_to_DB_and_collection(client, 'MarketApp', collection_name);
-        const filter = { "_id": id };
-        const updateDoc = {
-            $set: new_json_obj,
-        };
-        const options = { upsert: false };
-        const result = await collection.updateOne(filter, updateDoc, options)
-        await client.close();
-        console.log(result);
-        if (result.modifiedCount == 0) {
-            res.status(500).send("object didnt chnage maybe it doesnt exist in db!");
-        }
-        else {
-            res.status(200).send("object updated successfully in database!");
+        const collection = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
+        var cursor = await collection.findOne({"group":group});
+        var items = cursor.items;
+        if(items[id]){
+          for (key in new_json_obj){
+            items[id][key]=new_json_obj[key];
+          }
 
-        }
+          const filter = { "group": group };
+          const updateDoc = {
+            $set: {
+              "items": items
+            },
+          };
+          const options = { upsert: false };
+          const result = await collection.updateOne(filter, updateDoc, options)
+          await client.close();
+          console.log(result);
+          if (result.modifiedCount == 0) {
+              res.status(500).send("object didnt chnage maybe it doesnt exist in db!");
+          }
+          else {
+              res.status(200).send("object updated successfully in database!");
 
+          }
+        } else{
+          res.status(500).send("item index is invalid to update");
+        }
     } catch (e) {
         console.log(e);
         res.status(400).send(e.message);
@@ -65,22 +77,41 @@ module.exports.update_post = async (req, res) => {
 };
 
 module.exports.add_post = async (req,res)=>{
-    console.log(req.body);
-    let collection_name = req.body.collection_name;
+    // console.log(req.body);
+
+    const group =req.app.locals.user.group ;
     try{
       const client = new MongoClient(uri);
-      const collectionName = await connect_to_DB_and_collection(client, 'MarketApp', collection_name);
+      const collectionName = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
 
-      const json_object_I_am_about_to_insert = get_data_exept(req.body, [req.body.collection_name]);
-      console.log(json_object_I_am_about_to_insert);
-      const result = await collectionName.insertOne(json_object_I_am_about_to_insert);
-      console.log(result);
+      const json_object_I_am_about_to_insert = get_data_exept(req.body, []);
+      // console.log(json_object_I_am_about_to_insert);
+      var cursor = await collectionName.findOne({"group":group});
+      var items = cursor.items;
+      
+      const items_length = Object.keys(items).length +1;
+      // items ={};
+      items[`${items_length}`]=json_object_I_am_about_to_insert;
+      
+      // console.log(items);
+
+      const filter = { "group": group };
+      // this option instructs the method to create a document if no documents match the filter
+      const options = { upsert: false };
+      // create a document that sets the plot of the movie
+      const updateDoc = {
+        $set: {
+          "items": items
+        },
+      };
+      const result = await collectionName.updateOne(filter, updateDoc, options);
       await client.close();
+
       if(result.modifiedCount == 0 ){
         res.status(500).send("object didnt added in db!")
       }
       else{
-        console.log(`A document was inserted with the _id: ${result.insertedId}`);
+        // console.log(`A document was inserted with the _id: ${result.insertedId}`);
       
         res.status(200).send("added to the database!"); 
       }
@@ -93,22 +124,42 @@ module.exports.add_post = async (req,res)=>{
   };
 
   module.exports.delete_post = async (req,res) =>{
-    const id = Number(req.body.id);
-    const collection_name = req.body.collection_name;
-    console.log(id, collection_name);
+    const id = (req.body.item_index);
+    const group =req.app.locals.user.group ;
+    // console.log(id, group);
     try{
       const client = new MongoClient(uri);
       
-      const collection = await connect_to_DB_and_collection(client, 'MarketApp', collection_name);
-      const result = await collection.deleteOne({"_id":id});
+      const collection = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
+      var cursor = await collection.findOne({"group":group});
+      var items = cursor.items;
+      if(items[id]){
+        const tmp = delete items[id];
+        console.log(tmp);
 
-      await client.close();
-      console.log(result);
-      if(result.deletedCount > 0){
-      res.status(200).send("deleted from the database!");
+        const filter = { "group": group };
+        // this option instructs the method to create a document if no documents match the filter
+        const options = { upsert: false };
+        // create a document that sets the plot of the movie
+        const updateDoc = {
+          $set: {
+            "items": items
+          },
+        };
+        const result = await collection.updateOne(filter, updateDoc, options);
+        
+
+        await client.close();
+        // console.log(result);
+        if(result.modifiedCount > 0){
+        res.status(200).send("deleted from the database!");
+        }
+        else{
+          res.status(500).send("object didnt deleted from db!")
+        }
       }
       else{
-        res.status(500).send("object didnt deleted from db!")
+        res.status(500).send("object didnt exist to delete");
       } 
     }catch(e){
       console.log("error",e);
@@ -117,17 +168,77 @@ module.exports.add_post = async (req,res)=>{
   };
 
   module.exports.market_items_get = async (req,res)=> {
-    let s = req.params.s;
-    console.log(s);
+    
+    
+    const group =req.app.locals.user.group ;
+    console.log(group);
+    // console.log(s);
     try{
         const client = new MongoClient(uri);
       
-        const MarketItems = await connect_to_DB_and_collection(client, 'MarketApp', s)
+        const MarketItems = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems')
+        const options = {
+          sort:{"_id": 1}
+        }
         // const query = { title: 'Back to the Future' };
-        const cursor = await MarketItems.find({}).toArray();
+        const cursor = await MarketItems.findOne({"group":group}, options);
         await client.close();
-        console.log(`[200]: getting all ${s}`);
-        res.status(200).send(cursor)
+        console.log(`[200]: getting all Market Items for group: ${group}`);
+        
+        res.status(200).send(cursor.items)
+    }
+    catch(e){
+        console.log(e);
+        res.status(400).send({"status":"not ok"});
+    }
+  
+  };
+
+  module.exports.items_categories_get = async (req,res)=> {
+    
+    
+    
+    // console.log(s);
+    try{
+        const client = new MongoClient(uri);
+      
+        const ItemCategories = await connect_to_DB_and_collection(client, 'MarketApp', 'ItemCategories')
+        const options = {
+          
+        }
+        // const query = { title: 'Back to the Future' };
+        const cursor = await ItemCategories.findOne({"object":"items_list"}, options);
+        await client.close();
+        console.log(`[200]: getting all categories`);
+        // console.log(cursor);
+        res.status(200).send(cursor.value)
+    }
+    catch(e){
+        console.log(e);
+        res.status(400).send({"status":"not ok"});
+    }
+  
+  };
+
+
+  module.exports.super_items_categories_get = async (req,res)=> {
+    
+    
+    
+    // console.log(s);
+    try{
+        const client = new MongoClient(uri);
+      
+        const SuperItemCategories = await connect_to_DB_and_collection(client, 'MarketApp', 'ItemCategories')
+        const options = {
+          
+        }
+        // const query = { title: 'Back to the Future' };
+        const cursor = await SuperItemCategories.findOne({"object":"SuperCategories"}, options);
+        await client.close();
+        console.log(`[200]: getting all super-categories`);
+        // console.log(cursor);
+        res.status(200).send(cursor.value)
     }
     catch(e){
         console.log(e);

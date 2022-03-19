@@ -1,89 +1,53 @@
-const bcrypt = require("bcryptjs");
-function encryptPasswordIfChanged(user, options) {
-  if (user.changed('password')) {
-    encryptPassword(user.get('password'));
+const mongoose = require('mongoose');
+const { isEmail } = require('validator');
+const bcrypt = require('bcrypt');
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, 'Please enter a username'],
+    minlength: [5, 'Enter a username with minimum length of 6 charachters'],
+  },
+  group:{
+    type: String, 
+    unique: true,
+    minlength:[10]
+  },
+  email: {
+    type: String,
+    required: [true, 'Please enter an email'],
+    unique: true,
+    lowercase: true,
+    validate: [isEmail, 'Please enter a valid email']
+  },
+  password: {
+    type: String,
+    required: [true, 'Please enter a password'],
+    minlength: [6, 'Minimum password length is 6 characters'],
   }
-}
-module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("users", {
-      username: {
-        type:Sequelize.STRING, 
-        validate:{
-          not:{
-            args: /[_.]/,
-            msg: "[username] Must NOT contain '_' or '.'"
-          },
-          is:{args:/[a-zA-Z0-9._]/, msg:"[username value] should contain at minimum at least 4 letters "},
-          len:  {
-            args: [4,40],
-            msg: "[username length] Must NOT be less than 4 and Must NOT be greater than 40"
-          },
-        },
-        allowNull: false, 
-        primaryKey: true
-      },
-      password: {
-        type:Sequelize.STRING,
-        validate:{
-          len:  {
-            args: [8,30],
-            msg: "[password length] Must NOT be less than 8 and Must NOT be greater than 30"
-          },
-          is:{
-            args:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/,
-            msg: "[password value] should contain at minimum at least one letter and one number , length should be over 8 charachters"
-        }
-      },
-        
-        allowNull: false
-      },
-      group:{
-        
-        type:Sequelize.STRING,
-        len:  {
-            args: [10],
-            msg: "[group's name] Must be 10 characters"
-          },
-        allowNull: true
-      },
-      email:{
-        type:Sequelize.STRING,
-        validate:{
-          isEmail:{args:true, msg:"[email] must be a valid email address"},
-        },
-        allowNull:true
-      }
-    }, 
-      {
-        hooks:{
-          beforeCreate: async (user) => {
-            
-            if (user.password) {
-              
-              const salt = await bcrypt.genSalt();
-              user.password = bcrypt.hashSync(user.password, salt);
-              console.log(user.password);
-              
-            }
-           },
-           beforeUpdate:async (user) => {
-            if (user.password) {
-              if(user.changed('password')){
-                const salt = await bcrypt.genSalt();
-                user.password = bcrypt.hashSync(user.password, salt);
-              }
-            }
-           }
-          },
-          instanceMethods: {
-           validPassword: (password) => {
-            return bcrypt.compareSync(password, this.password);
-           }
-         
-        },
-      timestamps: false
+});
+
+
+// fire a function before doc saved to db
+userSchema.pre('save', async function(next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// static method to login user
+userSchema.statics.login = async function(email, password) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
     }
-  );
-  
-    return User;
-  };
+    throw Error('incorrect password');
+  }
+  throw Error('incorrect email');
+};
+
+const User = mongoose.model('user', userSchema);
+
+module.exports =User;
