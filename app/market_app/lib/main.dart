@@ -1,8 +1,7 @@
-import 'bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
-import 'colors.dart';
-import 'items.dart';
-import 'markets.dart';
+import 'package:market_app/screens/welcome/welcome_screen.dart';
+import 'details/colors.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -15,56 +14,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: _title,
-      home: MyStatefulWidget(),
-    );
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  // _MyStatefulWidgetState();
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle = TextStyle(
-    fontSize: 12,
-    fontFamily: 'Roboto',
-  );
-  var paidStatus = true;
-  late List screens = [Items(), markets()];
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Items',
-      style: optionStyle,
-    ),
-    Text(
-      'Markets',
-      style: optionStyle,
-    ),
-  ];
-
-  void _onItemTapped(int index) async {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: primaryGrey,
-      body: screens.elementAt(_selectedIndex),
-      resizeToAvoidBottomInset: false,
-      bottomNavigationBar: BottomMenu(
-        selectedIndex: _selectedIndex,
-        onClicked: _onItemTapped,
+      theme: ThemeData(
+        primaryColor: primaryGrey,
+        scaffoldBackgroundColor: Colors.white,
       ),
+      home: WelcomeScreen(),
     );
   }
 }
+
