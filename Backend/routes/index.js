@@ -21,7 +21,8 @@ router.get('/health', (req,res) =>{
   router.post('/delete' ,checkUser,basicController.delete_post);
   router.post("/add", checkUser,basicController.add_post);
   router.post('/update', checkUser,basicController.update_post);
-
+  router.get('/markets', requireAuth,basicController.markets_get);
+  router.get('/items-shorted/:super_market', checkUser, basicController.shorted_items_get);
 
 
 

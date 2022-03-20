@@ -50,28 +50,29 @@ supercategories = ["Τροφιμα", "Γαλακτοκομικά & Τυριά", 
 #     print(res)
 try:
     collection_name.delete_many({})
-    # cat.delete_many({})
+    # cat.delete_one({"object":"super_markets"})
     # supercat.delete_many({})
 except:
     print("no collection delete needed")
 size = 1
-items_dict = {}
+items_list = []
 for item in items:
     # tmp = collection_name.count_documents({'_id':size})
     # if (tmp>=1):
         # continue
     # else:
-    items_dict[f'{size}']={
-    # "_id":size,
+    items_list.append({
+    "_id":size,
     "item_name":item.item_name,
     "category":item.category,
     "quantity":item.quantity,
     "lastModified": datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-    }
+    })
     size+=1
 input={}
 input["group"]="ABCDEFGHIJ"
-input["items"]=items_dict
+input["items"]=items_list
+# insert
 collection_name.insert_one(input)
 a =1 
 b=1
@@ -108,12 +109,10 @@ input3={}
 # input3["correct_list"]=correct_list
 # input3["address"]="Βουλιαγμένης 43-45, 16561 Γλυφάδα"
 input3["object"]="super_markets"
-input3["value"]={
-    "name":"ab",
-    "items_list":correct_list,
-    "address":"Βουλιαγμένης 43-45, 16561 Γλυφάδα",
+input3["super_market_name"]="ab"
+input3["shorted_items_list"]=correct_list
+input3["address"]="Βουλιαγμένης 43-45, 16561 Γλυφάδα"
 
-}
 # insert
 # cat.insert_one(input3)
 # insert

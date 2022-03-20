@@ -10,7 +10,7 @@ const requireAuth = (req, res, next) =>{
     const token = req.cookies.jwt;
     
     // check if jwt exists and if is verified
-    console.log("cookies: ",req.cookies);
+    // console.log("cookies: ",req.cookies);
     if(token){
         jwt.verify(token, random.secret, (err, decodedToken)=>{
             if(err){
@@ -18,7 +18,7 @@ const requireAuth = (req, res, next) =>{
                 console.log(err.message);
             }
             else{
-                console.log(decodedToken);
+                // console.log(decodedToken);
                 next();
             }
         });
@@ -41,7 +41,7 @@ const checkUser = (req,res, next) =>{
                 next(); // user not logged in
             }
             else{
-                console.log(decodedToken);
+                // console.log(decodedToken);
                 console.log("token is valid");
 
                  await User.findOne({

@@ -32,11 +32,22 @@ function get_data_exept(body, list){
     return new_json_obj;
 }
 
-
+function check(list , object){
+  index = 0;
+  for(item of list){
+    console.log(item)
+    if(item["_id"] == object["_id"]){
+      return index;
+    }
+    index++;
+  }
+  return ;
+}
 // the update method to handle an update post request
 module.exports.update_post = async (req, res) => {
    
-    let id = (req.body.item_index);
+    let name = (req.body.item_name);
+    let id = req.body.id;
     const group =req.app.locals.user.group ;
 
     let new_json_obj = get_data_exept(req.body, [req.body.item_index]);
@@ -45,9 +56,11 @@ module.exports.update_post = async (req, res) => {
         const collection = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
         var cursor = await collection.findOne({"group":group});
         var items = cursor.items;
-        if(items[id]){
+        const check_index = check(items, new_json_obj);
+        if(check_index != null){
+          
           for (key in new_json_obj){
-            items[id][key]=new_json_obj[key];
+            items[check_index][key]=new_json_obj[key];
           }
 
           const filter = { "group": group };
@@ -85,13 +98,22 @@ module.exports.add_post = async (req,res)=>{
       const collectionName = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
 
       const json_object_I_am_about_to_insert = get_data_exept(req.body, []);
+      
+      if(!(json_object_I_am_about_to_insert["quantity"]) || !(json_object_I_am_about_to_insert["item_name"]) || !(json_object_I_am_about_to_insert["category"])){
+        throw new Error("NOT VALID ITEM ");
+      }
       // console.log(json_object_I_am_about_to_insert);
       var cursor = await collectionName.findOne({"group":group});
       var items = cursor.items;
-      
-      const items_length = Object.keys(items).length +1;
+      for (item of items ){
+        if(item["item_name"] == json_object_I_am_about_to_insert["item_name"]){
+          throw new Error("DUPLICATE ENTRY , DENNIED");
+        }
+      }
+      const items_length = items.length +1;
       // items ={};
-      items[`${items_length}`]=json_object_I_am_about_to_insert;
+      json_object_I_am_about_to_insert["_id"]= items_length;
+      items.push(json_object_I_am_about_to_insert);
       
       // console.log(items);
 
@@ -124,7 +146,7 @@ module.exports.add_post = async (req,res)=>{
   };
 
   module.exports.delete_post = async (req,res) =>{
-    const id = (req.body.item_index);
+    const name = (req.body.item_name);
     const group =req.app.locals.user.group ;
     // console.log(id, group);
     try{
@@ -133,10 +155,19 @@ module.exports.add_post = async (req,res)=>{
       const collection = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
       var cursor = await collection.findOne({"group":group});
       var items = cursor.items;
-      if(items[id]){
-        const tmp = delete items[id];
-        console.log(tmp);
-
+      var check_index = check(items, req.body)
+      if( check_index != null){
+        
+        for( var i = 0; i < items.length; i++){ 
+    
+          if ( i == check_index) { 
+      
+              items.splice(i, 1); 
+          }
+      
+      }
+        // console.log(tmp, check_index);
+        console.log(items);
         const filter = { "group": group };
         // this option instructs the method to create a document if no documents match the filter
         const options = { upsert: false };
@@ -239,6 +270,68 @@ module.exports.add_post = async (req,res)=>{
         console.log(`[200]: getting all super-categories`);
         // console.log(cursor);
         res.status(200).send(cursor.value)
+    }
+    catch(e){
+        console.log(e);
+        res.status(400).send({"status":"not ok"});
+    }
+  
+  };
+
+  module.exports.markets_get = async (req,res)=> {
+    
+    
+    
+    // console.log(s);
+    try{
+        const client = new MongoClient(uri);
+      
+        const ItemCategories = await connect_to_DB_and_collection(client, 'MarketApp', 'ItemCategories')
+        const options = {
+          
+          projection: {_id:0 ,"super_market_name":1 , "address":1},
+        }
+        // const query = { title: 'Back to the Future' };
+        const cursor = await ItemCategories.find({"object":"super_markets"}, options).toArray();
+        
+        await client.close();
+        
+        
+        res.status(200).send(cursor);
+    }
+    catch(e){
+        console.log(e);
+        res.status(400).send({"status":"not ok"});
+    }
+  
+  };
+  module.exports.shorted_items_get = async (req,res)=> {
+    
+    const super_market = req.params.super_market;
+    const group =req.app.locals.user.group ;
+    
+    try{
+        const client = new MongoClient(uri);
+      
+        const ItemCategories = await connect_to_DB_and_collection(client, 'MarketApp', 'ItemCategories');
+        const MarketItems = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
+        const options = {
+          
+          projection: {"_id":0,"shorted_items_list":1 },
+        }
+        // const query = { title: 'Back to the Future' };
+        const cursor = await ItemCategories.findOne({"object":"super_markets", "super_market_name":super_market}, options);
+        const pre_items = await MarketItems.findOne({"group":group });
+        const items = pre_items["items"];
+        correct_list = (cursor["shorted_items_list"])
+        output = []
+        // for (correct_category of correct_list){
+        //   output.push()
+        // }
+        for (item in items){
+          console.log(item);
+        }
+        res.status(200).send(cursor);
     }
     catch(e){
         console.log(e);
