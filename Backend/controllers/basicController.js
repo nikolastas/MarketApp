@@ -330,7 +330,7 @@ module.exports.add_post = async (req,res)=>{
         // organize base on category
         category_list = {}
         for (item of items){
-          console.log(item)
+          // console.log(item)
           if(category_list.hasOwnProperty(item["category"]) ){
             category_list[item["category"]].push(item);
           }

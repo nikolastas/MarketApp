@@ -31,24 +31,24 @@ const requireAuth = (req, res, next) =>{
 const checkUser = (req,res, next) =>{
     const token =  req.cookies.jwt;
     if(token){
-        console.log("token exists");
+        // console.log("token exists");
         jwt.verify(token, random.secret, async (err, decodedToken)=>{
             if(err){
                 console.log("token is not valid");
                 console.log(err.message);
                 req.app.locals.user = null;
                 // res.locals.user = null;
-                next(); // user not logged in
+                res.status(500).send('[error] token is not valid, please login');
             }
             else{
                 // console.log(decodedToken);
-                console.log("token is valid");
+                // console.log("token is valid");
 
                  await User.findOne({
                         "username": decodedToken.id
                 }).then(user => {
-                    console.log("found user");
-                    console.log(user.username);
+                    // console.log("found user");
+                    // console.log(user.username);
                     req.app.locals.user = user;
                     res.locals.user = user.username;
                 }).catch(err => {
@@ -62,8 +62,8 @@ const checkUser = (req,res, next) =>{
         req.app.locals.user = null;
         // res.locals.user = null;
         
-        console.log("user toke doesnt exists");
-        next();
+        console.log("user token doesnt exists");
+        res.status(400).send('[error] user is not log in');
     }
 
 }
