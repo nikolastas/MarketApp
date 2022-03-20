@@ -18,7 +18,6 @@
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.6",
     "morgan": "^1.10.0",
-    "package": "^1.0.1",
-    "validator": "^13.7.0"
+    "package": "^1.0.1"
   }
 }
