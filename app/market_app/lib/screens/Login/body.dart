@@ -10,15 +10,20 @@ import '../../components/rounded_password_field.dart';
 import '../../components/text_field_container.dart';
 import '../login/background.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   const Body({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
-    final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:market_app/http/auth.dart';
 
 import '../../components/already_have_an_account_check.dart';
 import '../../components/rounded_button.dart';
@@ -61,7 +62,26 @@ class Body extends StatelessWidget {
           RoundedButton(
               width: size.width * 0.8,
               text: "Sign Up",
-              press: () {},
+              press: () async {
+                var response = await signup(
+                    usernameController.text,
+                    emailController.text,
+                    groupController.text,
+                    passwordController.text);
+                if (response.statusCode == 200) {
+                  print(response.body);
+                } else {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          child: Container(
+                            child: Text(response.body),
+                          ),
+                        );
+                      });
+                }
+              },
               textcolor: Colors.white,
               backgroundColor: Colors.indigo),
           AlreadyHaveAnAccountCheck(

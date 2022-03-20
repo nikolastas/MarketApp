@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RoundedInputField extends StatelessWidget {
+class RoundedInputField extends StatefulWidget {
   const RoundedInputField({
     Key? key,
     required,
@@ -18,22 +18,28 @@ class RoundedInputField extends StatelessWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
   final TextEditingController controller;
+
+  @override
+  State<RoundedInputField> createState() => _RoundedInputFieldState();
+}
+
+class _RoundedInputFieldState extends State<RoundedInputField> {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       margin: EdgeInsets.symmetric(vertical: 10),
-      width: width,
+      width: widget.width,
       decoration: BoxDecoration(
-        color: color,
+        color: widget.color,
         borderRadius: BorderRadius.circular(29),
       ),
       child: TextField(
-        controller: controller,
-        onChanged: onChanged,
+        controller: widget.controller,
+        // onChanged: widget.onChanged,
         decoration: InputDecoration(
-          icon: icon,
-          hintText: hintText,
+          icon: widget.icon,
+          hintText: widget.hintText,
           border: InputBorder.none,
         ),
       ),

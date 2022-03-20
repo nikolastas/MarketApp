@@ -11,6 +11,24 @@ Future<http.Response> login(String username, String password) async {
       },
       body: jsonEncode(
           <String, String>{"username": username, "password": password}));
-  print(response.body);
+  print(response.headers);
+  return response;
+}
+
+Future<http.Response> signup(
+    String username, String email, String group, String password) async {
+  print("i am about to signup");
+  final response = await http.post(
+      Uri.parse('https://marketapp2022.azurewebsites.net/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "username": username,
+        "password": password,
+        "group": group,
+        "email": email
+      }));
+  print(response.headers);
   return response;
 }
