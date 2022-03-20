@@ -4,6 +4,7 @@
 const {MongoClient} = require('mongodb')
 const uri = process.env.DATABASE_URL;
 const moment = require('moment');
+const { json } = require('express');
 // connect to my database
 
 // const client = new MongoClient(process.env.DATABASE_URL);
@@ -321,17 +322,31 @@ module.exports.add_post = async (req,res)=>{
         }
         // const query = { title: 'Back to the Future' };
         const cursor = await ItemCategories.findOne({"object":"super_markets", "super_market_name":super_market}, options);
+        const shorted_categori_list = cursor["shorted_items_list"];
         const pre_items = await MarketItems.findOne({"group":group });
         const items = pre_items["items"];
         correct_list = (cursor["shorted_items_list"])
         output = []
-        // for (correct_category of correct_list){
-        //   output.push()
-        // }
-        for (item in items){
-          console.log(item);
+        // organize base on category
+        category_list = {}
+        for (item of items){
+          console.log(item)
+          if(category_list.hasOwnProperty(item["category"]) ){
+            category_list[item["category"]].push(item);
+          }
+          else{
+           
+            category_list[item["category"]]=[item];
+          }
         }
-        res.status(200).send(cursor);
+        // output based on shorted categories
+        output =[]
+        for (correct_category of correct_list){
+          if(category_list[correct_category]){
+            output.push(category_list[correct_category])
+          }
+        }
+        res.status(200).send(output);
     }
     catch(e){
         console.log(e);
