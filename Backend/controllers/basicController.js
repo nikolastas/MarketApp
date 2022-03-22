@@ -94,6 +94,7 @@ module.exports.add_post = async (req,res)=>{
     // console.log(req.body);
 
     const group =req.app.locals.user.group ;
+    console.log(group);
     try{
       const client = new MongoClient(uri);
       const collectionName = await connect_to_DB_and_collection(client, 'MarketApp', 'MarketItems');
@@ -105,22 +106,30 @@ module.exports.add_post = async (req,res)=>{
       }
       // console.log(json_object_I_am_about_to_insert);
       var cursor = await collectionName.findOne({"group":group});
-      var items = cursor.items;
-      for (item of items ){
-        if(item["item_name"] == json_object_I_am_about_to_insert["item_name"]){
-          throw new Error("DUPLICATE ENTRY , DENNIED");
+      console.log(cursor);
+      var items = []
+      if(cursor!=null ){
+        items = cursor.items;
+        for (item of items ){
+          if(item["item_name"] == json_object_I_am_about_to_insert["item_name"]){
+            throw new Error("DUPLICATE ENTRY , DENNIED");
+          }
         }
+      
+        const items_length = items.length +1;
+        // items ={};
+        json_object_I_am_about_to_insert["_id"]= items_length;
+        items.push(json_object_I_am_about_to_insert);
       }
-      const items_length = items.length +1;
-      // items ={};
-      json_object_I_am_about_to_insert["_id"]= items_length;
-      items.push(json_object_I_am_about_to_insert);
+      else{
+        items.push(json_object_I_am_about_to_insert);
+      }
       
       // console.log(items);
 
       const filter = { "group": group };
       // this option instructs the method to create a document if no documents match the filter
-      const options = { upsert: false };
+      const options = { upsert: true };
       // create a document that sets the plot of the movie
       const updateDoc = {
         $set: {
@@ -129,14 +138,17 @@ module.exports.add_post = async (req,res)=>{
       };
       const result = await collectionName.updateOne(filter, updateDoc, options);
       await client.close();
-
-      if(result.modifiedCount == 0 ){
-        res.status(500).send("object didnt added in db!")
+      console.log(result);
+      if(result.modifiedCount == 0  && result.upsertedCount == 0){
+        res.status(500).send(" object didnt added in db!")
+      }
+      else if (result.upsertedCount >=1){
+        res.status(200).send("added to the database!"); 
       }
       else{
         // console.log(`A document was inserted with the _id: ${result.insertedId}`);
       
-        res.status(200).send("added to the database!"); 
+        res.status(200).send("updated items to the database!"); 
       }
       
     } catch(e){
