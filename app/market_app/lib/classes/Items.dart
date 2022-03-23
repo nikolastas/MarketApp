@@ -1,21 +1,32 @@
 class Item {
-  final String name;
-  final int quantity;
-  final String category;
-  final id;
-  bool value;
+  int? iId;
+  String? itemName;
+  String? category;
+  int? quantity;
+  String? lastModified;
+
   Item(
-      {required this.id,
-      required this.name,
-      required this.category,
-      required this.quantity,
-      required this.value});
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
-        id: json['_id'],
-        name: json['item_name'],
-        category: json['category'],
-        quantity: json['quantity'],
-        value: false);
+      {this.iId,
+      this.itemName,
+      this.category,
+      this.quantity,
+      this.lastModified});
+
+  Item.fromJson(Map<String, dynamic> json) {
+    iId = json['_id'];
+    itemName = json['item_name'];
+    category = json['category'];
+    quantity = json['quantity'];
+    lastModified = json['lastModified'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.iId;
+    data['item_name'] = this.itemName;
+    data['category'] = this.category;
+    data['quantity'] = this.quantity;
+    data['lastModified'] = this.lastModified;
+    return data;
   }
 }

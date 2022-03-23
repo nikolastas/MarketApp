@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:market_app/http/auth.dart';
+import 'package:market_app/http/client.dart';
 
 import '../../components/already_have_an_account_check.dart';
 import '../../components/rounded_button.dart';
@@ -7,6 +8,7 @@ import '../../components/rounded_input_field.dart';
 
 import '../../components/rounded_password_field.dart';
 import '../../details/colors.dart';
+
 import '../Login/login_screen.dart';
 import 'background.dart';
 
@@ -63,13 +65,12 @@ class Body extends StatelessWidget {
               width: size.width * 0.8,
               text: "Sign Up",
               press: () async {
-                var response = await signup(
+                var response = await ApiClient().signup(
                     usernameController.text,
                     emailController.text,
                     groupController.text,
                     passwordController.text);
                 if (response.statusCode == 200) {
-                  print(response.body);
                 } else {
                   showDialog(
                       context: context,

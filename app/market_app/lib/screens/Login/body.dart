@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:market_app/components/rounded_button.dart';
 import 'package:market_app/details/colors.dart';
+
 import 'package:market_app/http/auth.dart';
+import 'package:market_app/http/client.dart';
+import 'package:market_app/screens/home/home.dart';
+import 'package:market_app/screens/root/root.dart';
 import 'package:market_app/screens/singup/signup_screen.dart';
 
 import '../../components/already_have_an_account_check.dart';
@@ -60,11 +66,16 @@ class _BodyState extends State<Body> {
                 width: size.width * 0.8,
                 text: "Login",
                 press: () async {
-                  var response = await login(
-                      usernameController.text, passwordController.text);
+                  var response = await ApiClient()
+                      .login(usernameController.text, passwordController.text);
                   if (response.statusCode == 200) {
-                    print(response.body);
+                    print(response);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => RootPage()),
+                        (route) => false);
                   } else {
+                    print(response);
                     print("error with login");
                   }
                 },

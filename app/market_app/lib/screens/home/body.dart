@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+
+import 'package:market_app/http/client.dart';
+import 'package:market_app/http/requests.dart';
+
+import '../../classes/Items.dart';
+import '../../components/rounded_button.dart';
+import '../../details/colors.dart';
+import '../root/root.dart';
+
+class Body extends StatefulWidget {
+  const Body({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  Future<List<ItemsList>>? _futureItemsList;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        buildFutureBuilder(),
+        Center(
+          child: Container(
+            child: RoundedButton(
+              backgroundColor: primaryGrey,
+              width: size.width * 0.8,
+              press: () {},
+              text: "Sign Out",
+              textcolor: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  FutureBuilder<List<Item>> buildFutureBuilder() {
+    return FutureBuilder<List<Item>>(
+      future: ApiClient().createItem(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          debugPrint("snapshot has Data");
+          return ItemsList(items: snapshot.data!);
+        } else if (snapshot.hasError) {
+          debugPrint('${snapshot.data}');
+          debugPrint("snapshot doesnt has Data");
+          debugPrint('${snapshot.stackTrace}');
+          return Text('${snapshot.error}');
+        }
+
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+class ItemsList extends StatefulWidget {
+  const ItemsList({Key? key, required this.items}) : super(key: key);
+
+  final List<Item> items;
+
+  @override
+  _ItemsList createState() => _ItemsList();
+}
+
+class _ItemsList extends State<ItemsList> {
+  late List<Item> items = [];
+  // late List<Category> categories =[];
+  // final _checked = <Item> [];
+  bool checkboxvalue = false;
+  // void _onRememberMeChanged(bool newValue) => setState(() {
+  //   checkboxvalue = newValue;
+  @override
+  void initState() {
+    super.initState();
+    items = widget.items;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        //     childAspectRatio: 3 / 2,
+        //     crossAxisSpacing: 20,
+        //     mainAxisSpacing: 20,
+        //     crossAxisCount: 2),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width * 0.06,
+            ),
+            width: MediaQuery.of(context).size.height * 0.95,
+            height: MediaQuery.of(context).size.height * 0.09,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(27),
+                color: (true) ? Colors.red : Colors.grey[500]),
+            child:
+
+                // mainAxisAlignment: MainAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+
+                InkWell(
+              onTap: () {},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(Icons.shopping_basket),
+                  Container(
+                    width: MediaQuery.of(context).size.height * 0.35,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          '${items[index].itemName} : ${items[index].quantity}',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: MediaQuery.of(context).size.width *
+                                  MediaQuery.of(context).size.height *
+                                  0.000075),
+                        ),
+                        Text(
+                          '${items[index].category}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: MediaQuery.of(context).size.width *
+                                MediaQuery.of(context).size.height *
+                                0.00006,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Divider(
+                  //   color: Colors.grey,
+                  //   height: 1.0,
+                  //   indent: 30.0,
+                  //   endIndent: 30.0,
+                  // ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+}
