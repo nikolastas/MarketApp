@@ -8,37 +8,39 @@ import '../classes/Items.dart';
 import '../screens/root/root.dart';
 import 'client.dart';
 
-Future<void> deleteItemClient(
+Future<http.Response> deleteItemClient(
     int id, http.Client client, Map<String, String> headers) async {
   print("i am about to cancel a selected item");
   final response = await client.post(
       Uri.parse('https://marketapp2022.azurewebsites.net/delete'),
       headers: headers,
       body: jsonEncode(<String, String>{
-        "id": id.toString(),
-        "collection_name": 'MarketItems'
+        "_id": id.toString(),
       }));
-  if (response.statusCode == 200) {
-    print("deleted successfully");
-    return;
-  } else {
-    print("something went wrong");
-    return;
-  }
+  print(response.statusCode.toString() + response.body);
+  return response;
 }
 
 Future<List<Category>> createCategoriesClient(
     http.Client client, Map<String, String> headers) async {
   final response = await client.get(
-      Uri.parse('https://marketapp2022.azurewebsites.net/get-ItemCategories'),
+      Uri.parse('https://marketapp2022.azurewebsites.net/items-categories'),
       headers: headers);
   if (response.statusCode == 200) {
     final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
     debugPrint('200');
-    return parsed.map<Category>((json) => Category.fromJson(json)).toList();
+    List<Category> categories_list = [];
+    (jsonDecode(response.body) as List).forEach((element) {
+      categories_list.add(Category.fromJson(element));
+    });
+    categories_list.toList();
+
+    return categories_list;
+    // return parsed.map<Category>((json) => Category.fromJson(json)).toList();
     // item.fromJson(jsonDecode(response.body));
   } else {
     debugPrint('${response.statusCode}');
+    debugPrint(response.body);
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
     throw Exception('Failed to create category list.');
@@ -53,10 +55,13 @@ Future<List<Item>> createItemClient(
       headers: headers);
 
   if (response.statusCode == 200) {
-    final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
     debugPrint('200');
-    print(response.body);
-    return parsed.map<Item>((json) => Item.fromJson(json)).toList();
+
+    List<Item> items_list = [];
+    (jsonDecode(response.body) as List).forEach((element) {
+      items_list.add(Item.fromJson(element));
+    });
+    return items_list;
     // item.fromJson(jsonDecode(response.body));
   } else {
     debugPrint('${response.statusCode}');
@@ -65,4 +70,16 @@ Future<List<Item>> createItemClient(
     // then throw an exception.
     throw Exception('Failed to create item list.');
   }
+}
+
+Future<http.Response> updateItemClient(int id, Map<String, String> body,
+    http.Client client, Map<String, String> headers) async {
+  body["_id"] = id.toString();
+  print("i am about to update a selected item of index: $id");
+  final response = await client.post(
+      Uri.parse('https://marketapp2022.azurewebsites.net/update'),
+      headers: headers,
+      body: jsonEncode(body));
+  print(response.statusCode.toString() + response.body);
+  return response;
 }

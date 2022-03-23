@@ -6,11 +6,15 @@ import 'client.dart';
 import 'package:market_app/http/client.dart';
 import 'client.dart';
 
+String baseURL = "https://marketapp2022.azurewebsites.net";
 Future<http.Response> loginClient(
     String username, String password, http.Client client) async {
-  print("i am about to login");
-  final response = await client.post(
+  print("i am about to login with credentials: " + username + " " + password);
+  var response = await http.post(
       Uri.parse('https://marketapp2022.azurewebsites.net/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
       body: jsonEncode(
           <String, String>{"username": username, "password": password}));
   print(response.body);
@@ -23,6 +27,9 @@ Future<http.Response> signupClient(String username, String email, String group,
   print("i am about to signup");
   final response = await client.post(
       Uri.parse('https://marketapp2022.azurewebsites.net/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
       body: jsonEncode(<String, String>{
         "username": username,
         "password": password,

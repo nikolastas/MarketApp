@@ -75,7 +75,7 @@ class _BodyState extends State<Body> {
                         MaterialPageRoute(builder: (context) => RootPage()),
                         (route) => false);
                   } else {
-                    print(response);
+                    print(response.statusCode);
                     print("error with login");
                   }
                 },

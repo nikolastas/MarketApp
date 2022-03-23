@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:market_app/http/client.dart';
 import 'package:market_app/http/requests.dart';
-
+import 'package:market_app/screens/home/edit_item.dart';
+import '../../http/client.dart';
 import '../../classes/Items.dart';
 import '../../components/rounded_button.dart';
 import '../../details/colors.dart';
@@ -19,26 +20,24 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   Future<List<ItemsList>>? _futureItemsList;
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        buildFutureBuilder(),
-        Center(
-          child: Container(
-            child: RoundedButton(
-              backgroundColor: primaryGrey,
-              width: size.width * 0.8,
-              press: () {},
-              text: "Sign Out",
-              textcolor: Colors.white,
-            ),
-          ),
-        ),
-      ],
-    );
+    return RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            print("new state");
+            buildFutureBuilder();
+          });
+        },
+        child: Stack(children: [buildFutureBuilder()]));
   }
 
   FutureBuilder<List<Item>> buildFutureBuilder() {
@@ -55,7 +54,7 @@ class _BodyState extends State<Body> {
           return Text('${snapshot.error}');
         }
 
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
@@ -101,18 +100,48 @@ class _ItemsList extends State<ItemsList> {
             height: MediaQuery.of(context).size.height * 0.09,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(27),
-                color: (true) ? Colors.red : Colors.grey[500]),
+                color: (items[index].aboutToDelete == true)
+                    ? Colors.red
+                    : Colors.grey[500]),
             child:
 
                 // mainAxisAlignment: MainAxisAlignment.start,
                 // crossAxisAlignment: CrossAxisAlignment.start,
 
                 InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EditItems(
+                              editableItem: items[index],
+                            )));
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Icon(Icons.shopping_basket),
+                  Checkbox(
+                      value: items[index].aboutToDelete,
+                      shape: CircleBorder(),
+                      checkColor: primaryPink,
+                      onChanged: (val) async {
+                        setState(() {
+                          items[index].aboutToDelete = val!;
+                        });
+                        await Future.delayed(Duration(seconds: 3));
+                        if (items[index].aboutToDelete == true) {
+                          debugPrint(
+                              "this should send a delete  post request to item ${items[index].iId}");
+
+                          var response =
+                              await ApiClient().deleteItem(items[index].iId!);
+                          if (response.statusCode == 200) {
+                            setState(() {
+                              items.removeAt(index);
+                            });
+                          }
+                        }
+                      }),
                   Container(
                     width: MediaQuery.of(context).size.height * 0.35,
                     child: Column(
@@ -142,14 +171,14 @@ class _ItemsList extends State<ItemsList> {
                       ],
                     ),
                   ),
-
-                  // Divider(
-                  //   color: Colors.grey,
-                  //   height: 1.0,
-                  //   indent: 30.0,
-                  //   endIndent: 30.0,
-                  // ),
                 ],
+
+                // Divider(
+                //   color: Colors.grey,
+                //   height: 1.0,
+                //   indent: 30.0,
+                //   endIndent: 30.0,
+                // ),
               ),
             ),
           );

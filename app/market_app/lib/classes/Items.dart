@@ -4,13 +4,15 @@ class Item {
   String? category;
   int? quantity;
   String? lastModified;
+  bool aboutToDelete = false;
 
   Item(
       {this.iId,
       this.itemName,
       this.category,
       this.quantity,
-      this.lastModified});
+      this.lastModified,
+      required this.aboutToDelete});
 
   Item.fromJson(Map<String, dynamic> json) {
     iId = json['_id'];
@@ -18,6 +20,7 @@ class Item {
     category = json['category'];
     quantity = json['quantity'];
     lastModified = json['lastModified'];
+    aboutToDelete = false;
   }
 
   Map<String, dynamic> toJson() {
