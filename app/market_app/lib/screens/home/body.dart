@@ -9,16 +9,16 @@ import '../../components/rounded_button.dart';
 import '../../details/colors.dart';
 import '../root/root.dart';
 
-class Body extends StatefulWidget {
-  const Body({
+class HomeScreenBody extends StatefulWidget {
+  const HomeScreenBody({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<Body> createState() => _BodyState();
+  State<HomeScreenBody> createState() => _BodyState();
 }
 
-class _BodyState extends State<Body> {
+class _BodyState extends State<HomeScreenBody> {
   Future<List<ItemsList>>? _futureItemsList;
   @override
   void didChangeDependencies() {

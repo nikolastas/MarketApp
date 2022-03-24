@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:market_app/classes/user.dart';
 import 'package:market_app/components/rounded_button.dart';
 import 'package:market_app/details/colors.dart';
 
@@ -17,10 +18,11 @@ import '../../components/text_field_container.dart';
 import '../login/background.dart';
 
 class Body extends StatefulWidget {
-  const Body({
+  Body({
     Key? key,
+    this.currentUser,
   }) : super(key: key);
-
+  late User? currentUser;
   @override
   State<Body> createState() => _BodyState();
 }
@@ -70,6 +72,7 @@ class _BodyState extends State<Body> {
                       .login(usernameController.text, passwordController.text);
                   if (response.statusCode == 200) {
                     print(response);
+
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => RootPage()),

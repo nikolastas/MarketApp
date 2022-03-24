@@ -83,3 +83,14 @@ Future<http.Response> updateItemClient(int id, Map<String, String> body,
   print(response.statusCode.toString() + response.body);
   return response;
 }
+
+Future<http.Response> addItemClient(Map<String, String> body,
+    http.Client client, Map<String, String> headers) async {
+  print("i am about to add an item");
+  final response = await client.post(
+      Uri.parse('https://marketapp2022.azurewebsites.net/add'),
+      headers: headers,
+      body: jsonEncode(body));
+  print(response.statusCode.toString() + response.body);
+  return response;
+}

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:market_app/http/auth.dart';
 import 'dart:convert';
 import '../classes/Items.dart';
+import '../classes/user.dart';
 import 'requests.dart';
 import '../classes/Category.dart';
 
@@ -47,9 +48,15 @@ class ApiClient {
 
   Future<http.Response> login(String username, String password) async {
     http.Response response = await loginClient(username, password, client);
-    updateCookie(response);
-    print("cookie jwt updated with value: " + headers["jwt"]!);
-    storage.write(key: "jwt", value: headers["jwt"]);
+    if (response.statusCode == 200) {
+      updateCookie(response);
+      print("cookie jwt updated with value: " + headers["jwt"]!);
+      await storage.write(key: "jwt", value: headers["jwt"]);
+      User currentUser = User.fromJson(jsonDecode(response.body));
+      await storage.write(key: "username", value: currentUser.username);
+      await storage.write(key: "email", value: currentUser.email);
+      await storage.write(key: "group", value: currentUser.group);
+    }
     return response;
   }
 
@@ -73,12 +80,18 @@ class ApiClient {
     return await updateItemClient(id, body, client, headers);
   }
 
-  Future<http.Response> logout() async {
-    var response = await logoutClient(client);
-    if (response.statusCode == 200) {
+  Future<bool> logout() async {
+    // var response = await logoutClient(client);
+    if (true) {
       headers["jwt"] = "";
       var jwt = await storage.write(key: "jwt", value: "");
     }
-    return response;
+    return true;
+  }
+
+  Future<http.Response> addItem(Map<String, String> body) async {
+    var jwt = await storage.read(key: "jwt");
+    headers["jwt"] = jwt.toString();
+    return await addItemClient(body, client, headers);
   }
 }
