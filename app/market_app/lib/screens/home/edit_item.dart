@@ -30,6 +30,7 @@ class _EditItems extends State<EditItems> {
     changed_category = widget.editableItem.category!;
     changed_item_name = widget.editableItem.itemName!;
     changed_quantity = widget.editableItem.quantity!;
+    _selected = widget.editableItem.category!;
   }
 
   @override
@@ -153,13 +154,15 @@ class _EditItems extends State<EditItems> {
         if (snapshot.hasData) {
           List<String> categories = snapshot.data!
               .map<String>((Category value) {
-                return (value.name.toString());
+                return (value.name);
               })
               .toSet()
               .toList();
+
           categories.map(
-            (e) => print(e),
-          );
+              (e) => (e != _selected && e.toString() != _selected) ? e : null);
+          print(_selected);
+          print(categories);
           return DropdownButton<String>(
             value: _selected,
             icon: Icon(Icons.arrow_drop_down),
@@ -171,12 +174,12 @@ class _EditItems extends State<EditItems> {
                 _selected = newValue;
               });
             },
-            items: snapshot.data!
-                .map((Category e) => DropdownMenuItem<String>(
-                      child: Text(e.name),
-                      value: e.name,
-                    ))
-                .toList(),
+            items: categories.map((e) {
+              return DropdownMenuItem<String>(
+                child: Text(e),
+                value: e,
+              );
+            }).toList(),
           );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:market_app/screens/Login/login_screen.dart';
+import 'package:market_app/screens/home/home.dart';
 import 'package:market_app/screens/root/root.dart';
+import 'package:market_app/screens/singup/signup_screen.dart';
 import 'package:market_app/screens/welcome/welcome_screen.dart';
 import 'details/colors.dart';
 
@@ -25,7 +28,14 @@ class _MyAppState extends State<MyApp> {
         primaryColor: primaryGrey,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: RootPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const RootPage(),
+        '/items': ((context) => const HomeScreen()),
+        '/welcome': ((context) => const WelcomeScreen()),
+        '/login': ((context) => const LoginScreen()),
+        '/signup': ((context) => const SignupScreen())
+      },
     );
   }
 }

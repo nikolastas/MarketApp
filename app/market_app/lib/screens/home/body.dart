@@ -31,15 +31,7 @@ class _BodyState extends State<Body> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
-        onRefresh: () async {
-          setState(() async {
-            await widget.upda
-            setState(() {
-              widget.items = widget.feeds.getList();
-            });
-          });
-        },
-        child: Stack(children: [buildFutureBuilder()]));
+        onRefresh: () async {}, child: Stack(children: [buildFutureBuilder()]));
   }
 
   FutureBuilder<List<Item>> buildFutureBuilder() {
@@ -70,7 +62,6 @@ class ItemsList extends StatefulWidget {
   @override
   _ItemsList createState() => _ItemsList();
 }
-
 
 class _ItemsList extends State<ItemsList> {
   late List<Item> items = [];
