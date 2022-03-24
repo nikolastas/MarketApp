@@ -72,4 +72,13 @@ class ApiClient {
     headers["jwt"] = jwt.toString();
     return await updateItemClient(id, body, client, headers);
   }
+
+  Future<http.Response> logout() async {
+    var response = await logoutClient(client);
+    if (response.statusCode == 200) {
+      headers["jwt"] = "";
+      var jwt = await storage.write(key: "jwt", value: "");
+    }
+    return response;
+  }
 }

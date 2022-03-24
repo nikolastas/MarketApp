@@ -60,3 +60,16 @@ Future<String> onStartUpClient(
   }
   return retVal;
 }
+
+Future<http.Response> logoutClient(http.Client client) async {
+  print("i am about to logout with credentials");
+  var response = await http.post(
+      Uri.parse('https://marketapp2022.azurewebsites.net/logout'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{}));
+  print(response.body);
+
+  return response;
+}

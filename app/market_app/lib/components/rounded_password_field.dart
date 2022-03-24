@@ -24,7 +24,7 @@ class _RoundedPasswordFieldState extends State<RoundedPasswordField> {
 
   @override
   void initState() {
-    _passwordVisible = false;
+    _passwordVisible = true;
   }
 
   @override
