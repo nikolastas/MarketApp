@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:market_app/details/colors.dart';
 import 'package:market_app/screens/Login/login_screen.dart';

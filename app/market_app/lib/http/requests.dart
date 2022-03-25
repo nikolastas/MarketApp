@@ -1,10 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:market_app/classes/super_market.dart';
 
 import 'dart:convert';
 
 import '../classes/Category.dart';
 import '../classes/Items.dart';
+import '../screens/markets/markets.dart';
 import '../screens/root/root.dart';
 import 'client.dart';
 
@@ -93,4 +95,26 @@ Future<http.Response> addItemClient(Map<String, String> body,
       body: jsonEncode(body));
   print(response.statusCode.toString() + response.body);
   return response;
+}
+
+Future<List<SuperMarket>> marketsClient(
+    http.Client client, Map<String, String> headers) async {
+  print("i am about to search for markets");
+  final response = await client.get(
+    Uri.parse('https://marketapp2022.azurewebsites.net/markets'),
+    headers: headers,
+  );
+  if (response.statusCode == 200) {
+    List<SuperMarket> markets_list = [];
+    (jsonDecode(response.body) as List).forEach((element) {
+      markets_list.add(SuperMarket.fromJson(element));
+    });
+    return markets_list;
+  } else {
+    debugPrint('${response.statusCode}');
+    print(response.body);
+    // If the server did not return a 200 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to get markets list.');
+  }
 }

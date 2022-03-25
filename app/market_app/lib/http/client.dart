@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:market_app/classes/super_market.dart';
 import 'package:market_app/http/auth.dart';
 import 'dart:convert';
 import '../classes/Items.dart';
@@ -93,5 +94,11 @@ class ApiClient {
     var jwt = await storage.read(key: "jwt");
     headers["jwt"] = jwt.toString();
     return await addItemClient(body, client, headers);
+  }
+
+  Future<List<SuperMarket>> markets() async {
+    var jwt = await storage.read(key: "jwt");
+    headers["jwt"] = jwt.toString();
+    return await marketsClient(client, headers);
   }
 }
