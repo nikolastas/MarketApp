@@ -105,16 +105,16 @@ correct_list = ["Ψωμί","Φρέσκα Φρούτα & Λαχανικά", "Ψά
 "Βρεφική περιποίηση", "Βρεφικές κρέμες", "Πάνες & Μωρομάντηλα", "Αξεσουάρ για το μωρό",  "Άλλα προιόντα"]
  
 input3={}
-# input3["super_market_name"]="ab"
+# input3["super_market_name"]=""
 # input3["correct_list"]=correct_list
 # input3["address"]="Βουλιαγμένης 43-45, 16561 Γλυφάδα"
 input3["object"]="super_markets"
-input3["super_market_name"]="ab"
+input3["super_market_name"]="ΑΒ Βασιλόπουλος"
 input3["shorted_items_list"]=correct_list
 input3["address"]="Βουλιαγμένης 43-45, 16561 Γλυφάδα"
 
 # insert
-# cat.insert_one(input3)
+cat.insert_one(input3)
 # insert
 # cat.insert_one({
 #     "object":"items_list",
