@@ -7,6 +7,7 @@ Basic app fetures:
 - Items can be edited, deleted or added by users.
 - Supported store locations can be viewed in maps.
 <br/>
+
 # Backend
 A node js API . 
 <br/> 
