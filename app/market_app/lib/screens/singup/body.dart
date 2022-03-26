@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:market_app/http/auth.dart';
 import 'package:market_app/http/client.dart';
-
+import '../root/root.dart';
 import '../../components/already_have_an_account_check.dart';
 import '../../components/rounded_button.dart';
 import '../../components/rounded_input_field.dart';
@@ -71,6 +71,10 @@ class Body extends StatelessWidget {
                     groupController.text,
                     passwordController.text);
                 if (response.statusCode == 200) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => RootPage()),
+                      (route) => false);
                 } else {
                   showDialog(
                       context: context,

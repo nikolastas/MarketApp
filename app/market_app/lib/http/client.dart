@@ -63,10 +63,19 @@ class ApiClient {
 
   Future<http.Response> signup(
       String username, String email, String group, String password) async {
-    http.Response res =
+    http.Response response =
         await signupClient(username, email, group, password, client);
-    updateCookie(res);
-    return res;
+    updateCookie(response);
+    if (response.statusCode == 200) {
+      updateCookie(response);
+      print("cookie jwt updated with value: " + headers["jwt"]!);
+      await storage.write(key: "jwt", value: headers["jwt"]);
+      User currentUser = User.fromJson(jsonDecode(response.body));
+      await storage.write(key: "username", value: currentUser.username);
+      await storage.write(key: "email", value: currentUser.email);
+      await storage.write(key: "group", value: currentUser.group);
+    }
+    return response;
   }
 
   Future<String> onStartUp() async {
@@ -100,5 +109,11 @@ class ApiClient {
     var jwt = await storage.read(key: "jwt");
     headers["jwt"] = jwt.toString();
     return await marketsClient(client, headers);
+  }
+
+  Future<List<Item>> shortedItemsList(String market_name) async {
+    var jwt = await storage.read(key: "jwt");
+    headers["jwt"] = jwt.toString();
+    return await shortedItemsListClient(market_name, client, headers);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:market_app/screens/Login/login_screen.dart';
 import 'package:market_app/screens/home/home.dart';
 import 'package:market_app/screens/root/root.dart';
@@ -7,6 +8,13 @@ import 'package:market_app/screens/welcome/welcome_screen.dart';
 import 'details/colors.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent,
+  ));
+  // This appears to result in native full screen mode
+  SystemChrome.setEnabledSystemUIOverlays([]);
+
   runApp(MyApp());
 }
 

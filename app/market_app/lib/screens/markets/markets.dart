@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:market_app/classes/super_market.dart';
-
+import 'package:market_app/details/colors.dart';
+import 'package:maps_launcher/maps_launcher.dart';
+import 'package:market_app/screens/markets/shorted_items.dart';
 import '../../http/client.dart';
 
 class Markets extends StatefulWidget {
@@ -13,8 +15,11 @@ class Markets extends StatefulWidget {
 class _MarketsState extends State<Markets> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [],
+    return Scaffold(
+      backgroundColor: primaryGrey,
+      body: Stack(
+        children: [buildFutureBuilder()],
+      ),
     );
   }
 
@@ -46,8 +51,80 @@ class SuperMarketList extends StatefulWidget {
 }
 
 class _SuperMarketListState extends State<SuperMarketList> {
+  List<SuperMarket> markets = [];
+  @override
+  void initState() {
+    super.initState();
+    markets = widget.markets;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    Size size = MediaQuery.of(context).size;
+    return ListView.builder(
+        // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        //     childAspectRatio: 3 / 2,
+        //     crossAxisSpacing: 20,
+        //     mainAxisSpacing: 20,
+        //     crossAxisCount: 2),
+        itemCount: markets.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  print("pressed");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShortedMarketItems(
+                                super_marker_name:
+                                    markets[index].SuperMarketName,
+                              )));
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(7),
+                  margin: EdgeInsets.all(8),
+                  width: size.width * 0.8,
+                  height: size.width * 0.2,
+                  decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(29)),
+                  child: Column(
+                    children: [
+                      Text(
+                        markets[index].SuperMarketName,
+                        style: TextStyle(fontSize: 26),
+                      ),
+                      SizedBox(
+                        height: 9,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          MapsLauncher.launchQuery(markets[index].Address);
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.location_on),
+                            Text(markets[index].Address),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(
+                height: 0,
+                thickness: 3,
+                indent: 20,
+                endIndent: 20,
+              ),
+            ],
+          );
+        });
   }
 }

@@ -118,3 +118,26 @@ Future<List<SuperMarket>> marketsClient(
     throw Exception('Failed to get markets list.');
   }
 }
+
+Future<List<Item>> shortedItemsListClient(
+    String market_name, http.Client client, Map<String, String> headers) async {
+  print("i am about to get the items in shorted order");
+  final response = await client.get(
+    Uri.parse(
+        'https://marketapp2022.azurewebsites.net/items-shorted/' + market_name),
+    headers: headers,
+  );
+  if (response.statusCode == 200) {
+    List<Item> shorted_items_list = [];
+    (jsonDecode(response.body) as List).forEach((element) {
+      shorted_items_list.add(Item.fromJson(element[0]));
+    });
+    return shorted_items_list;
+  } else {
+    debugPrint('${response.statusCode}');
+    print(response.body);
+    // If the server did not return a 200 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to get items list in short order.');
+  }
+}
