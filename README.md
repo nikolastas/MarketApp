@@ -21,16 +21,18 @@ Basicly the response sents a cookie that the reciptent should save it localy. Ev
 
 | Request type | Request API Call | Responde type |Authentication| Commends |
 | --- | --- | --- | --- | ---| 
-| GET | / |  |
-| GET | /health |
-| POST | /login |
-| POST | /signup |
-| POST | /logout |
+| GET | / |"welcome"  | NO| see if docker is working |
+| GET | /health |{ "status":"ok" } |NO | check the health of the API 
+| POST | /login | { "username": {username}, "email": {user_email}, "group":{group}, "token": {token}  } | NO | if login was succesful the system return this json object|
+| POST | /signup | { "username": {username}, "email": {user_email}, "group":{group}, "token": {token}  } |NO | if signup is successful return this json object
+| POST | /logout | " " | YES | succedes only if user is loged out
 | POST | /change-password |
-| GET | /checkUser |
-| POST | /add |
+| GET | /checkUser |{"username" : {username} } | YES | returns the usernmae if user is logged in
+| POST | /add | 
 | POST | /edit |
 | POST | /delete |
 | GET | /market-items |
 | GET | /markets |
-| 
+| GET | /super-categories |
+| GET | /shorted-list/:market |
+
