@@ -10,6 +10,7 @@ Basic app fetures:
 
 # Backend
 A node js API . 
+
 <br/> 
 
 ## Authentication.
@@ -19,10 +20,14 @@ Requests use the x-www-form-urlencode body form.
 
 
 ### Signup 
+A POST sign up request must contain the unique username , unique email , a password and a group (optional).
 
 ### Login
+A POST login request must contain only username and the password.
+In the database , before store the password they are actually hashed.
 
 ### Logout
+Logout request doesnt require databse conection only deletes the stored cookie.
 
 <br/>
 
@@ -50,6 +55,6 @@ Requests use the x-www-form-urlencode body form.
 
 # Frontend - App
 This is an app to give my backend a form . 
-
+To do that a flutter is used . You could see some of the basic utilities above:...
 
 <p><Strong><bold> This readme will be updated often. I will try to solve every issue.  <bold/><Strong/> <p/>
