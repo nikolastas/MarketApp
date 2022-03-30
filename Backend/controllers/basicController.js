@@ -33,6 +33,13 @@ function get_data_exept(body, list) {
   return new_json_obj;
 }
 
+function normalizeGreek(text) {
+  /*
+  thanks to https://stackoverflow.com/questions/23346506/javascript-normalize-accented-greek-characters/45797754#45797754 
+  */
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+}
+
 function check(list, object) {
   index = 0;
   for (item of list) {
@@ -241,7 +248,7 @@ module.exports.market_items_get = async (req, res) => {
 module.exports.items_categories_get = async (req, res) => {
 
 
-
+  let respond = [];
   // console.log(s);
   try {
     const client = new MongoClient(uri);
@@ -255,7 +262,18 @@ module.exports.items_categories_get = async (req, res) => {
     await client.close();
     console.log(`[200]: getting all categories`);
     // console.log(cursor);
-    res.status(200).send(cursor.value)
+    respond = cursor.value.sort(function (a, b) {
+      let nameA = a.name;
+      let nameB = b.name;
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
+    res.status(200).send(respond);
   }
   catch (e) {
     console.log(e);
