@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
   group: {
     type: String,
     unique: false,
-    minlength: [10]
+    minlength: [1, 'Enter a group with minimum length of 1 charachters'],
+    maxlength: [10, 'Enter a group with maximum length of 10 charachters'],
   },
   email: {
     type: String,
@@ -47,7 +48,9 @@ userSchema.statics.login = async function (email, password) {
   }
   throw Error('incorrect email');
 };
-
-const User = mongoose.model('user', userSchema);
+const conn = mongoose.createConnection(process.env.USERS_DATABASE_URL, {
+  serverSelectionTimeoutMS: 5000
+});
+const User = conn.model('user', userSchema);
 
 module.exports = User;

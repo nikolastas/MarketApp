@@ -30,7 +30,7 @@ const requireAuth = (req, res, next) => {
 //  check if a user's jwt is valid and user exists
 const checkUser = (req, res, next) => {
     const token = (req.cookies.jwt) ? req.cookies.jwt : req.headers.jwt;
-    console.log(req.headers);
+
     if (token) {
         // console.log("token exists");
         jwt.verify(token, random.secret, async (err, decodedToken) => {
