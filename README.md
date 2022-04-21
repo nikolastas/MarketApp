@@ -8,10 +8,17 @@ Basic app fetures:
 - Supported store locations can be viewed in maps.
 <br/>
 
+It includes a backend written in Javascript and a flutter andrdoid frontend.
+
+Please read the how to [download section](#donwload-the-app) if you want to download or use the app.
+
+It really helps young developers to star their project's so please if you find this project interesting , you know what to do!
 # Backend
 A node js API . 
-
 <br/> 
+This basic backend API, is using endpoinds which you can find at the basic requests section of the README. 
+<br/>
+
 
 ## Authentication.
 Basicly the response sents a cookie that the reciptent should save it localy. Every request after login or signup should have a cookie or a headers parameter as the request sent. 
@@ -56,5 +63,25 @@ Logout request doesnt require databse conection only deletes the stored cookie.
 # Frontend - App
 This is an app to give my backend a form . 
 To do that a flutter is used . You could see some of the basic utilities above:...
+
+# Donwload the app
+
+You can find the  file to download here.
+
+Propably you have to accept unkown sources to install it to your android phone.
+
+After installation you should see this icon to your phone.
+
+Opening the app you should be able to see this.
+
+Please make a account and fill in a 1 to 10 characters as your group-name.
+After successfully signing up you are able to see the app.
+
+If you want to see your groupname again got to the profile app.
+
+If you want to contact me for anything you are to do so in the support.
+
+All the other tabs are pretty easy to find on your own.
+
 
 <p><Strong><bold> This readme will be updated often. I will try to solve every issue.  <bold/><Strong/> <p/>
