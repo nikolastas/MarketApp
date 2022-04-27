@@ -63,17 +63,36 @@ Logout request doesnt require databse conection only deletes the stored cookie.
 # Frontend - App
 This is an app to give my backend a form . 
 To do that a flutter is used . You could see some of the basic utilities above:...
-
+root page (no login no signup):
+![root page](./frontend_apk/photos/root.jpg)
+login page :
+![login page](./frontend_apk/photos/login.jpg)
+sign up page :
+![signup page](./frontend_apk/photos/signup.jpg)
+Items page:
+![items page](./frontend_apk/photos/items.jpg)
+Markets page:
+![Markets page](./frontend_apk/photos/markets.jpg)
+Ordered List based on Market:
+![Ordered List based on Market](./frontend_apk/photos/ordered_list_market_list.jpg)
+Add item:
+![Add item](./frontend_apk/photos/add_item.jpg)
+![Add item categories list](./frontend_apk/photos/add_item_list_categories.jpg)
+Profile page:
+![Profile page](./frontend_apk/photos/profile.jpg)
+Support:
+![Support page](./frontend_apk/photos/support.jpg)
 # Donwload the app
 
-You can find the  file to download here.
+You can find the  file to download [here](./apk/).
 
 Propably you have to accept unkown sources to install it to your android phone.
 
 After installation you should see this icon to your phone.
+![icon](./frontend_apk/photos/icon.jpg)
 
 Opening the app you should be able to see this.
-
+![root page](./frontend_apk/photos/root.jpg)
 Please make a account and fill in a 1 to 10 characters as your group-name.
 After successfully signing up you are able to see the app.
 

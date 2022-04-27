@@ -263,8 +263,8 @@ module.exports.items_categories_get = async (req, res) => {
     console.log(`[200]: getting all categories`);
     // console.log(cursor);
     respond = cursor.value.sort(function (a, b) {
-      let nameA = a.name;
-      let nameB = b.name;
+      let nameA = normalizeGreek(a.name);
+      let nameB = normalizeGreek(b.name);
       if (nameA < nameB) {
         return -1;
       }
