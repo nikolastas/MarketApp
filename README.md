@@ -64,7 +64,9 @@ Logout request doesnt require databse conection only deletes the stored cookie.
 This is an app to give my backend a form . 
 To do that a flutter is used . You could see some of the basic utilities above:...
 root page (no login no signup):
+
 <img src="./frontend_apk/photos/root.jpg" alt="root page" width="200"/>
+
 login page :
 
 <img src="./frontend_apk/photos/login.jpg" alt="root page" width="200"/>
